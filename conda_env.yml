@@ -1,0 +1,12 @@
+name: conda_env
+channels:
+  - defaults
+  - anaconda
+dependencies:
+  - pandas
+  - numpy
+  - pip
+  - networkx
+  - matplotlib
+  - scipy
+  
