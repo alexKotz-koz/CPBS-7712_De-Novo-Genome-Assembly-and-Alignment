@@ -1,8 +1,9 @@
 import unittest
-import sys
 import pandas as pd
-sys.path.insert(0, '../')
-from src.components.reads_to_kmers import ReadsToKmers
+# Manually navigate to /src/, for importing of ReadsToKmers class
+import sys
+sys.path.insert(0, '../src/components')
+from readsToKmers import ReadsToKmers
 
 class TestReadsToKmers(unittest.TestCase):
     def setUp(self):
@@ -13,23 +14,23 @@ class TestReadsToKmers(unittest.TestCase):
         })
         #print(self.readsData)
 
-    def test_extract_kmers(self):
-        # Create an instance of ReadsToKmers
+    # parent test
+    def testExtractKmers(self):
         rtk = ReadsToKmers(self.readsData)
-        kmerPool, k = rtk.extract_kmers()
-        self.check_kmerPool(kmerPool=kmerPool)
-        self.check_k(k=k)
+        kmerPool, k = rtk.extractKmers()
 
-    def check_kmerPool(self, kmerPool):
-        self.assertDictEqual(kmerPool,{'ACGTACGTAC':{1:1,2:1,3:1}})
+        self.checkKmerPool(kmerPool=kmerPool)
+        self.checkK(k=k)
 
-    def check_k(self, k):
-        self.assertEqual(k, 10)
-        #print(kmerPool)
-        #print(k)
+    # child test: 
+        # kmerPool structure = {'kmer': {readID1: [{start index in read: stop index in read}]}}
+        # every possible kmer is in the kmer pool
+    def checkKmerPool(self, kmerPool):
+        self.assertDictEqual(kmerPool,{'ACGTACGTA': {1: [{0: 9}], 2: [{0: 9}], 3: [{0: 9}]}, 'CGTACGTAC': {1: [{1: 10}], 2: [{1: 10}], 3: [{1: 10}]}})
 
-        # Assert the expected output
-        # TODO: Add your assertions here
+    # child test: kmer length is static and consistent across all kmers
+    def checkK(self, k):
+        self.assertEqual(k, 9)
 
 if __name__ == '__main__':
     unittest.main()
