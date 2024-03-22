@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 import os
 import time
+import sys
 
-from components.de_bruijn_graph import DeBruijnGraph
-from components.reads_to_kmers import ReadsToKmers
+from components.deBruijnGraph import DeBruijnGraph
+from components.readsToKmers import ReadsToKmers
+from components.createContigs import CreateContigs
 
 def importData(queryFile, readsFile):
     query = ""
@@ -44,8 +46,8 @@ def importData(queryFile, readsFile):
     return dfQueryData, dfReadsData
 
 
-def main():
-    queryData, readsData = importData("./data/chatgpt_test_data/QUERY copy.fasta", './data/chatgpt_test_data/READS copy.fasta')
+def main(showGraphArg=None):
+    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/chatgptTestData/READS.fasta')
 
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()
@@ -58,13 +60,17 @@ def main():
     readsToKmersInstance = ReadsToKmers(readsData=readsData)
     #kmerPool = kmer table from reads
     #k = size of the kmers
-    kmerPool, k = readsToKmersInstance.extract_kmers()
+    kmerPool, k = readsToKmersInstance.extractKmers()
 
-    debruijnGraphInstance = DeBruijnGraph(readsData=readsData, queryData=queryData, kmerPool=kmerPool, k=k)
-    debruijnGraphInstance.construct_graph()
+    debruijnGraphInstance = DeBruijnGraph(readsData=readsData, queryData=queryData, kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
+    nodes, edges = debruijnGraphInstance.constructGraph()
+
+    createContigsInstance = CreateContigs(graph=edges)
+    createContigsInstance.createContigs()
 
 if __name__ == "__main__":
     start = time.time()
-    main()
+    arg1 = sys.argv[1] if len(sys.argv) > 1 else ''
+    main(arg1)
     end = time.time()
     print(f"Total Runtime:{end-start}")

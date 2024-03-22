@@ -3,18 +3,18 @@ class ReadsToKmers:
         self.readsData = readsData
         self.k = 9
 
-    def extract_kmers(self):
-        # kmerPool structure = {<kmer>: {readId: number of times the kmer is in this read}}
+    # Input: Reads data
+    # Ouput: kmerPool and k (length of kmers)
+    def extractKmers(self):
+        # kmerPool structure = {<kmer>: {readId: location of the kmer in the read}}
         kmerPool = {}
         readsData = self.readsData
         k = self.k
         
-        # iterate over each of the reads in the readsData
         for index, read in readsData.iterrows():
             # get the id and read from each row pair
             id = read['id']
             sequence = read['read']
-            # for each base in the sequence(read)
             for index, base in enumerate(sequence):
                 # kmer = substring of the sequence (iteration number (index) to the index + k)
                 kmer = sequence[index:index+k]
@@ -23,15 +23,12 @@ class ReadsToKmers:
                     # if so, check to see if the kmer exists in kmerPool
                     if kmer not in kmerPool:
                         kmerPool[kmer] = {}
-                    # if the read id is not in the kmer subdictionary, add the read id to the kmer subdictionary and set the count to 1
+                    # if the read id is not in the kmer subdictionary, add the read id and the location of the kmer in the read to the kmer subdictionary
                     if id not in kmerPool[kmer]:
-                        kmerPool[kmer][id] = 1
-                    # the read id is in the kmer subdictionary so increment the count (resulting in a number representing the total number of times the kmer exists in the read)
+                        kmerPool[kmer][id] = [{index:index+k}]
                     else:
-                        kmerPool[kmer][id] += 1
+                        kmerPool[kmer][id].append({index:index+k})
                     
-        #print(f"\nstructure of kmerPool ... <kmer>: <readId>:<count of kmer in pool> \n\n kmerPool: {kmerPool}")
-        #print(len(kmerPool))
         '''# Sort the kmerPool by the number of unique ids associated with each kmer
         sorted_kmerPool = sorted(kmerPool.items(), key=lambda item: len(item[1]))
 
@@ -40,3 +37,4 @@ class ReadsToKmers:
 
         print(f"The kmer that appears most is: {most_common_kmer}")     '''   
         return kmerPool, k    
+    
