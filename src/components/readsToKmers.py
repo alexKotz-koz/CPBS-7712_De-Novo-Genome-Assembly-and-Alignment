@@ -1,7 +1,7 @@
 class ReadsToKmers:
     def __init__(self, readsData):
         self.readsData = readsData
-        self.k = 9
+        self.k = 10
 
     # Input: Reads data
     # Ouput: kmerPool and k (length of kmers)
@@ -11,6 +11,9 @@ class ReadsToKmers:
         readsData = self.readsData
         k = self.k
         
+        
+
+
         for index, read in readsData.iterrows():
             # get the id and read from each row pair
             id = read['id']

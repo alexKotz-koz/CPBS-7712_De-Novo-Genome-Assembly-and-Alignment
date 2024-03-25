@@ -10,7 +10,7 @@ class TestReadsToKmers(unittest.TestCase):
         # Create a sample readsData DataFrame for testing
         self.readsData = pd.DataFrame({
             'id': [1, 2, 3],
-            'read': ['ACGTACGTAC', 'ACGTACGTAC', 'ACGTACGTAC']
+            'read': ['GCACGTACGTTT', 'ACGTACGTAC', 'ACGTACGTAC']
         })
         #print(self.readsData)
 
@@ -26,7 +26,16 @@ class TestReadsToKmers(unittest.TestCase):
         # kmerPool structure = {'kmer': {readID1: [{start index in read: stop index in read}]}}
         # every possible kmer is in the kmer pool
     def checkKmerPool(self, kmerPool):
-        self.assertDictEqual(kmerPool,{'ACGTACGTA': {1: [{0: 9}], 2: [{0: 9}], 3: [{0: 9}]}, 'CGTACGTAC': {1: [{1: 10}], 2: [{1: 10}], 3: [{1: 10}]}})
+        self.assertDictEqual(kmerPool,
+            {
+                'ACGTACGTA': {2: [{0: 9}], 3: [{0: 9}]}, 
+                'CGTACGTAC': {2: [{1: 10}], 3: [{1: 10}]},
+                'GCACGTACG': {1: [{0:9}]},
+                'CACGTACGT': {1: [{1:10}]},
+                'ACGTACGTT': {1: [{2:11}]},
+                'CGTACGTTT': {1: [{3:12}]},
+            }
+        )
 
     # child test: kmer length is static and consistent across all kmers
     def checkK(self, k):

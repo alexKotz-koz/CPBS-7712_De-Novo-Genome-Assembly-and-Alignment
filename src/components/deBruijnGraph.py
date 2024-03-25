@@ -4,9 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 class DeBruijnGraph:
-    def __init__(self, readsData, queryData, kmerPool, k, showGraphArg):
-        self.readsData = readsData
-        self.queryData = queryData
+    def __init__(self, kmerPool, k, showGraphArg):
         self.kmerPool = kmerPool
         self.k = k
         self.showGraphArg = showGraphArg
@@ -26,16 +24,17 @@ class DeBruijnGraph:
     # Output: nodes (a set containing all unique nodes), edges (a list containing tuples of source->target nodes)
     def constructGraph(self):
         kmerPool = self.kmerPool
-        edges = []
+        edges = {}
+        edges2 = []
         nodes = set()
         
         # get the prefix and suffix of each kmer and add to the nodes and edges data structures
         for kmer in kmerPool:
             prefix, suffix = self.getPrefixSuffix(kmer)
-            edges.append((prefix,suffix))
+            edges2.append((prefix,suffix))
+            edges[(prefix,suffix)] = kmerPool[kmer]
             nodes.add(prefix)
             nodes.add(suffix)
-
         # logic to visualize the graph, if "True" is pass with the run command (python3 main.py True) then the graph is shown
         if self.showGraphArg == "True":
             Graph = nx.MultiDiGraph()

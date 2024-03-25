@@ -47,27 +47,36 @@ def importData(queryFile, readsFile):
 
 
 def main(showGraphArg=None):
-    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/chatgptTestData/READS.fasta')
+    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/READS_Subset.fasta')
 
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
-    #print(minlen)
+    print(minlen)
     #print(maxlen)
     #print(readsData.head())
-
+    rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData)
     #kmerPool = kmer table from reads
     #k = size of the kmers
     kmerPool, k = readsToKmersInstance.extractKmers()
+    rtkStop = time.time()
+    print("ReadsToKmer completed in: ", rtkStop-rtkStart)
 
-    debruijnGraphInstance = DeBruijnGraph(readsData=readsData, queryData=queryData, kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
+    dbgStart = time.time()
+    debruijnGraphInstance = DeBruijnGraph(kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
     nodes, edges = debruijnGraphInstance.constructGraph()
+    dbgStop = time.time()
+    print("DeBruijnGraph completed in: ", dbgStop-dbgStart)
+    #print("In Main after DBG, nodes: ", nodes)
+    #print("In Main after DBG, edges: ", edges)
 
+    ccStart = time.time()
     createContigsInstance = CreateContigs(graph=edges)
     createContigsInstance.createContigs()
-
+    ccStop = time.time()
+    print("Create Contigs completed in: ", ccStop-ccStart)
 if __name__ == "__main__":
     start = time.time()
     arg1 = sys.argv[1] if len(sys.argv) > 1 else ''

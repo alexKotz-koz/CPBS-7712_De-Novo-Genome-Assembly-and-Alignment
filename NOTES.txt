@@ -1,0 +1,3 @@
+Assumptions:
+- all reads are left to right
+- 
