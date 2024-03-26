@@ -56,7 +56,8 @@ class CreateContigs:
     def followPath(self, startEdge):
         path = []
         # start the path with the start node returned from findStartNodes
-        target = startEdge
+        target = startEdge[0]
+        print(target)
         # make a copy of the graph to manipulate during the path walk
         tempGraph = self.graph.copy()
         '''df = pd.DataFrame(tempGraph)
@@ -77,8 +78,8 @@ class CreateContigs:
         while True:
             
             #In this code, dropwhile() skips items from the dictionary iterator until it reaches the start_key.
-            for edge, value in enumerate(tempGraph):
-                print(edge)
+            for i, edge in enumerate(tempGraph):
+                #print(edge)
                 target = edge[0]
                 '''if i+1<len(tempGraph) and edge[0] == tempGraph[i+2][0]:  
                     print(f"split in path @: {i} \n split @: {edge} and {tempGraph[i+1]}")'''
