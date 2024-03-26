@@ -7,6 +7,7 @@ import sys
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
 from components.createContigs import CreateContigs
+from components.searchString import SearchString
 
 def importData(queryFile, readsFile):
     query = ""
