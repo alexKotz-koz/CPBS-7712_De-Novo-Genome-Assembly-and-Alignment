@@ -18,15 +18,15 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: false
-    - name: Initialize Conda
-      run: conda init
 
     - name: Create Conda environment
       run: conda env create -f conda_env.yml
       shell: bash
 
     - name: Activate Conda environment
-      run: conda activate conda_env
+      run: |
+        conda init
+        conda activate conda_env
       shell: bash
 
     - name: Run main.py
