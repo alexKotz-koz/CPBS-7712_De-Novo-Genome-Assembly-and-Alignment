@@ -18,7 +18,6 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: false
-        activate-environment: conda_env
     
     - name: Remove existing Conda env
       run: | 
