@@ -75,9 +75,9 @@ class CreateContigs:
 
 
         while True:
-            dictIter = iter(tempGraph.items())
+            
             #In this code, dropwhile() skips items from the dictionary iterator until it reaches the start_key.
-            for edge, value in dropwhile(lambda edgeValue: edgeValue[0] != startEdge, dictIter):
+            for edge, value in enumerate(tempGraph):
                 print(edge)
                 target = edge[0]
                 '''if i+1<len(tempGraph) and edge[0] == tempGraph[i+2][0]:  
