@@ -10,9 +10,6 @@ class ReadsToKmers:
         kmerPool = {}
         readsData = self.readsData
         k = self.k
-        
-        
-
 
         for index, read in readsData.iterrows():
             # get the id and read from each row pair

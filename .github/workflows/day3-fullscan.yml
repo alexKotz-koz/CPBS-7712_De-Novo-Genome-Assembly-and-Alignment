@@ -1,0 +1,37 @@
+name: Day 3 Full Scan
+
+on:
+    push:
+        branches: [ master ]
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v2
+
+        - name: Set up Python
+            uses: actions/setup-python@v3
+            with:
+                python-version: 3.11
+
+        - name: Install Conda
+            run: |
+                echo "deb [arch=amd64] https://repo.anaconda.com/pkgs/misc/deb stable main" | sudo tee /etc/apt/sources.list.d/conda.list
+                sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 34161F5BF5EB1D4BFBBB8F0A8AEB4F7F63F9B278
+                sudo apt-get update
+                sudo apt-get install conda
+
+        - name: Create Conda environment
+            run: |
+                conda env create -f conda_env.yml
+
+        - name: Activate Conda environment
+            run: |
+                echo "conda activate $(head -1 conda_env.yml | cut -d' ' -f2)" >> ~/.bashrc
+                source ~/.bashrc
+
+        - name: Run Python script
+            run: python src/main.py
