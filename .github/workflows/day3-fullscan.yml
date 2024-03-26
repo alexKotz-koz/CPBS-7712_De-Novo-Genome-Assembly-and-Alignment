@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - ccDictionaryApproach
 
 jobs:
   build:
