@@ -19,6 +19,11 @@ jobs:
       with:
         auto-update-conda: false
         activate-environment: conda_env
+    
+    - name: Remove existing Conda env
+      run: | 
+        conda env remove -n conda_end || true
+      shell: bash
 
     - name: Create and Activate Conda environment
       run: | 
