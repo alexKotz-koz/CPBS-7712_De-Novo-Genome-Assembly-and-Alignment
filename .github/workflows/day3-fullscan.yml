@@ -19,7 +19,7 @@ jobs:
       with:
         auto-update-conda: false
     - name: Initialize Conda
-      run: conda 
+      run: conda init
 
     - name: Create Conda environment
       run: conda env create -f conda_env.yml
