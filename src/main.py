@@ -13,7 +13,9 @@ def importData(queryFile, readsFile):
     reads = ""
     queryData = []
     readsData = []
-
+    script_dir = os.path.dirname(__file__)  # get the directory of the current script
+    queryFile = os.path.join(script_dir, queryFile)
+    readsFile = os.path.join(script_dir, readsFile)
     # Import Query File Data
     with open(queryFile, "r") as inputQueryFile:
         query = inputQueryFile.readlines()
