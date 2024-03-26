@@ -27,7 +27,7 @@ jobs:
     - name: Create and Activate Conda environment
       run: | 
         conda env create -f conda_env.yml
-        conda init base
+        conda init bash
         source ~/.bashrc
         conda activate conda_env
         python3 src/main.py
