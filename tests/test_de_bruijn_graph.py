@@ -24,7 +24,11 @@ class TestDeBruijnGraph(unittest.TestCase):
         self.assertEqual(suffix, 'CGTACGTA')
         self.assertEqual(self.k-1, len(prefix))
         self.assertEqual(self.k-1, len(suffix))
-
+    def testPresenceInGraph(self):
+        nodes, edges = self.dbg.constructGraph()
+        for kmer in self.kmerPool:
+            prefix, suffix = self.dbg.getPrefixSuffix(kmer)
+            self.assertIn((prefix, suffix), edges)
 
 if __name__ == '__main__':
     unittest.main()

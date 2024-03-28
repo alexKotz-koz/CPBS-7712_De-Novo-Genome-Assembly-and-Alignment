@@ -35,8 +35,12 @@ class CreateContigs:
                 # Add the edge to the start_edges list
                 startEdges.append(edge)
 
+
+        with open("startNodes.txt", "w") as file:
+            for edge in startEdges:
+                file.write(edge[0] + "\n")
+
         '''
-        
         #This is for start node identification via sets
 
         sourceNodes = set()
