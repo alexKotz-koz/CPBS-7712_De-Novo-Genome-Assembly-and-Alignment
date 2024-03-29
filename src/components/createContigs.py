@@ -13,7 +13,8 @@ class CreateContigs:
         #calculate the in and out degrees for each node
         edgesCount = {}
         startEdges = []
-        for edge in inputGraph:
+        for edge in inputGraph.items():
+            print(edge)
             # first node in the tuple has an outgoing edge
             if edge[0] in edgesCount:
                 edgesCount[edge[0]][1] += 1
@@ -111,6 +112,7 @@ class CreateContigs:
     # Output: contiguous sequences
     def createContigs(self):
         inputGraph = self.graph
+
         edgesCount, startEdges = self.findStartNodes(inputGraph)
         print("Number of starting nodes: ", len(startEdges))
 
