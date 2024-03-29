@@ -12,34 +12,41 @@ class CreateContigs:
         ## TODO: Will need to optimize for larger dataset
         #calculate the in and out degrees for each node
         edgesCount = {}
-        startEdges = []
+        startNodes = []
         for edge in inputGraph.items():
-            print(edge)
+            #print('edge', edge)
+            #print('edge[0]: ',edge[0])
+            
+            #print('edge[1]: ', edge[1])
             # first node in the tuple has an outgoing edge
             if edge[0] in edgesCount:
                 edgesCount[edge[0]][1] += 1
             else:
                 edgesCount[edge[0]] = [0,1] #[incoming, outgoing]
             
-            # second node in the tuple has an incoming edge
-            if edge[1] in edgesCount:
-                edgesCount[edge[1]][0] += 1
-            else:
-                edgesCount[edge[1]] = [1,0]
+            for suffix in edge[1]:
+                #print('suffix: ', suffix)
+                if suffix in edgesCount:
+                    edgesCount[suffix][0] += 1
+                else:
+                    edgesCount[suffix] = [1,0]
+            
+        
+        for edge in edgesCount.items():
+            if edge[1][0] == 0:
+                startNodes.append(edge[0])
+            
+            
         #print("edgecount: ", edgesCount)
         # Initialize a list to store the start edges
 
-        # Iterate over the edges
+        '''# Iterate over the edges
         for edge in inputGraph:
             # If the first node in the edge is not in edges_count or has zero incoming edges
             if edge[0] not in edgesCount or edgesCount[edge[0]][0] == 0:
                 # Add the edge to the start_edges list
-                startEdges.append(edge)
+                startEdges.append(edge)'''
 
-
-        with open("startNodes.txt", "w") as file:
-            for edge in startEdges:
-                file.write(edge[0] + "\n")
 
         '''
         #This is for start node identification via sets
@@ -57,32 +64,20 @@ class CreateContigs:
         startNodes = sourceNodes-targetNodes
         #print('start nodes: ', startNodes)
         '''
-        return edgesCount, startEdges
+        return edgesCount, startNodes
 
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
-    def followPath(self, startEdge):
+    def followPath(self, startNode):
         path = []
-        target = startEdge[0]
-        print(target)
+        target = startNode
         tempGraph = self.graph.copy()
-
-        startIndex = -1
-        for index, edge in enumerate(tempGraph):
-            if edge == startEdge:
-                startIndex = index
-        
-        if startIndex == -1:
-            print("error finding start index for path walk")
-            exit
-
+        #print(tempGraph)
 
         while True:
             
             #In this code, dropwhile() skips items from the dictionary iterator until it reaches the start_key.
-            for i, edge in enumerate(tempGraph):
-                #print(edge)
-                
+            for edge in tempGraph.items():                
                 '''if i+1<len(tempGraph) and edge[0] == tempGraph[i+2][0]:  
                     print(f"split in path @: {i} \n split @: {edge} and {tempGraph[i+1]}")'''
                 '''
@@ -91,14 +86,20 @@ class CreateContigs:
                     print(F"current path is: {path}")
                     break
                 '''
-                if edge[0] == target:
+                prefix = edge[0]
+                suffixes = edge[1]
+                if prefix == target:
                     
-                    path.append({edge:tempGraph[edge]})
-
-                    target = edge[1]
+                    # normal case: 1 prefix to 1 suffix
+                    if len(suffixes) == 1:
+                        path.append({prefix:suffixes[0]})
+                        target = suffixes[0]
+                        del tempGraph[prefix]
+                    else:
+                        del tempGraph[prefix]
                     # remove the edge from the graph copy
                     
-                    del tempGraph[edge]
+                    #print(path)
                     #del tempGraph[i]
                     # exit the for loop 
                     break
@@ -113,15 +114,15 @@ class CreateContigs:
     def createContigs(self):
         inputGraph = self.graph
 
-        edgesCount, startEdges = self.findStartNodes(inputGraph)
-        print("Number of starting nodes: ", len(startEdges))
+        edgesCount, startNodes = self.findStartNodes(inputGraph)
+        print("Number of starting nodes: ", len(startNodes))
 
         contigs = []
         contigIndexTable = {}
         #print(inputGraph)
 
-        for edge in startEdges:
-            self.followPath(startEdge=edge)
+        for node in startNodes:
+            self.followPath(node)
         
         '''for node in edgesCount:
             if edgesCount[node][0] == 0:
