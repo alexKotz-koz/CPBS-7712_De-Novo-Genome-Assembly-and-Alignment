@@ -5,6 +5,7 @@ class CreateContigs:
         self.graph = graph
         self.finalGraph = []
         self.allPaths = []
+        self.edgesCount = {}
 
     # Input: edge list from readsToKmers
     # Output: a list of all start nodes (nodes that only have outgoing edges)
@@ -64,42 +65,40 @@ class CreateContigs:
         startNodes = sourceNodes-targetNodes
         #print('start nodes: ', startNodes)
         '''
+        self.edgesCount = edgesCount
         return edgesCount, startNodes
 
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
     def followPath(self, startNode):
-        path = []
-        target = startNode
+        paths = []
+        stack = [startNode]
+        visited = []
         tempGraph = self.graph.copy()
         #print(tempGraph)
-        
-        while True:
-            #In this code, dropwhile() skips items from the dictionary iterator until it reaches the start_key.
-            for edge in tempGraph.items():                
-                prefix = edge[0]
-                suffixes = edge[1]
+        while stack:
+            print(f"stack: {stack}")
+            
+            currentNode = stack.pop()
+            #print(f"current node: {currentNode}")
+            if currentNode not in visited:
+                visited.append(currentNode)
+                #print(f"visited: {visited}")
 
-                if prefix == target:
-                    ## TO COVER OTHER CASES ADD MORE IF/ELSE STATEMENTS FOR SIZE OF SUFFIXES
-                    if len(suffixes) == 1:
-                        path.append({prefix:suffixes[0]})
-                        target = suffixes[0]
-                        del tempGraph[prefix]
-                    #if len(suffixes) >= 1:   
-                    #    print("here")                 
-                    #    for i, v in enumerate(suffixes):
-                    #        path.append({prefix:suffixes[i]})
-                    #    target = suffixes[0]
-                    #    del tempGraph[prefix]
-                    else:
-                        del tempGraph[prefix]
-    
-                    break
-            # break when no more edges are available (no more edges that have an outgoing edge)
-            else:
-                break
-        self.allPaths.append(path)
+                ## Check if last node in the path
+                if currentNode not in tempGraph:
+                    for edge in self.edgesCount:
+                        if currentNode == edge:
+                            #print(f"edge in edgesCount: {self.edgesCount[edge]}")
+                            if self.edgesCount[edge][1] == 0:
+                                return visited
+                            
+
+                # add the neighboors of the currentNode to the stack (if the neighboors are not already visited)
+                stack.extend([node for node in tempGraph[currentNode] if node not in visited])
+                print(tempGraph[currentNode])
+
+        
     
 
     # Input: graph (edge list)
@@ -114,74 +113,28 @@ class CreateContigs:
         contigIndexTable = {}
         #print(inputGraph)
 
-        for node in startNodes:
-            self.followPath(node)
-        
-        '''for node in edgesCount:
-            if edgesCount[node][0] == 0:
-                self.followPath(startEdge=node)
-                print(node)'''
+        for node in startNodes[:3]:
+            visited = self.followPath(node)
+            print("\n")
+            self.allPaths.append(visited)
+            
 
         for path in self.allPaths:
             contig = []
             contigStr = ""
-            contigMetadata = []
-            kmers = []
-            #print(path)
-            for ei,edge in enumerate(path):
-                #print(edge)
-                for nodes in edge.items():
-                    #print(nodes)
-                    metadata = path[ei]
-                    for ni, node in enumerate(nodes):
-                        if len(contig) == 0:
-                            contig.append(node)
-                            contigStr = node
 
-                        else:
-                            contig.append(node[-1])
-
-                            contigStr += node[-1]
-                            
-                        if ni == 0:
-                            kmer = node + nodes[1][-1]
-                            
-                        if ni == 1:
-                            '''if kmer not in contigStr:
-                                print("NOT in contig")
-                            else:
-                                print("KMER in CONTIG")'''
-                            startIndex = contigStr.find(kmer)
-                            stopIndex = startIndex + len(kmer)
-                            contigMetadata.append({kmer: {startIndex: stopIndex}})
-                        
-                    break
+            for node in path:
+                if len(contig) == 0:
+                    contig.append(node)
+                else:
+                    contig.append(node[-1])
         
-            contig = ''.join(contig)
-            
-            contigs.append(contig)
-            contigIndexTable[contig] = contigMetadata
-            with open('contigs.txt', 'w') as file:
-                for i in contigs:
-                    file.write(i)
-                    file.write("\n")
-            #print(contigIndexTable)
+            contigStr = ''.join(contig)       
+            contigs.append(contigStr)
+        with open("contigs.txt", "w") as file:
+            for contig in contigs:
+                file.write(contig + "\n")
 
-        #print(len(inputGraph))
-        '''for i, edge in enumerate(inputGraph):
-        
-            # if there is a split in the graph
-            if i+1<len(inputGraph):
-                if edge[0] == inputGraph[i+1][0]:
-                    print(f"split in path at: {inputGraph[i+1]} and {edge}") 
-                    if edge[0] == inputGraph[i+2][0]:
-                        print(f"2 splits in path at: {inputGraph[i+1]} and {edge}")                     
-            # if there is a self repeating loop
-            if edge[0] == edge[1]:
-                print(f"Loop in graph @: {edge}")'''
-
-
-        #print('contigs: ', contigs)
         print('contigs len: ', [len(contig) for contig in contigs])
         print('number of contigs:', len(contigs))
         return contigs
