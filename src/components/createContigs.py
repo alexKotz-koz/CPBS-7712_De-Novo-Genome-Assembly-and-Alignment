@@ -73,35 +73,28 @@ class CreateContigs:
         target = startNode
         tempGraph = self.graph.copy()
         #print(tempGraph)
-
+        
         while True:
-            
             #In this code, dropwhile() skips items from the dictionary iterator until it reaches the start_key.
             for edge in tempGraph.items():                
-                '''if i+1<len(tempGraph) and edge[0] == tempGraph[i+2][0]:  
-                    print(f"split in path @: {i} \n split @: {edge} and {tempGraph[i+1]}")'''
-                '''
-                if edge[0] == edge[1]:
-                    print(f"self repeating loop @: {i} \n edge:{edge}")
-                    print(F"current path is: {path}")
-                    break
-                '''
                 prefix = edge[0]
                 suffixes = edge[1]
+
                 if prefix == target:
-                    
-                    # normal case: 1 prefix to 1 suffix
+                    ## TO COVER OTHER CASES ADD MORE IF/ELSE STATEMENTS FOR SIZE OF SUFFIXES
                     if len(suffixes) == 1:
                         path.append({prefix:suffixes[0]})
                         target = suffixes[0]
                         del tempGraph[prefix]
+                    #if len(suffixes) >= 1:   
+                    #    print("here")                 
+                    #    for i, v in enumerate(suffixes):
+                    #        path.append({prefix:suffixes[i]})
+                    #    target = suffixes[0]
+                    #    del tempGraph[prefix]
                     else:
                         del tempGraph[prefix]
-                    # remove the edge from the graph copy
-                    
-                    #print(path)
-                    #del tempGraph[i]
-                    # exit the for loop 
+    
                     break
             # break when no more edges are available (no more edges that have an outgoing edge)
             else:
@@ -134,10 +127,11 @@ class CreateContigs:
             contigStr = ""
             contigMetadata = []
             kmers = []
-
+            #print(path)
             for ei,edge in enumerate(path):
-
-                for nodes in edge.keys():
+                #print(edge)
+                for nodes in edge.items():
+                    #print(nodes)
                     metadata = path[ei]
                     for ni, node in enumerate(nodes):
                         if len(contig) == 0:
