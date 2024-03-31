@@ -1,5 +1,6 @@
 import pandas as pd
 from itertools import dropwhile
+import json
 class CreateContigs:
     def __init__(self, graph):
         self.graph = graph
@@ -55,7 +56,6 @@ class CreateContigs:
         extendedPath = []
         stack = [startNode]
         print(f"FU follow path. Current unfinished path: {visited}")
-        print(f"FU extended path.......................: {extendedPath}")
         print(f"FU Start Node: {startNode}")
         while stack:
             currentNode = stack.pop()
@@ -73,12 +73,29 @@ class CreateContigs:
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren:
-                        print(f"Subpath has children| {currentNode}:{children}")
+                        # if either of the children are exit nodes,
                         for child in children:
-                            
-                            visited.extend(extendedPath)
-                            
-                            self.followSubPath(child, extendedPath, tempGraph=tempGraph)
+                            for edge in self.edgesCount:
+                                if child == edge:
+                                    if self.edgesCount[edge][1] == 0:
+                                        visited.extend(extendedPath)
+                                        if edge == extendedPath[-1]:
+                                            print(f"Sub follow path routine resulted in a child that is an exit node")
+                                            return extendedPath
+                                        elif edge not in extendedPath:
+                                            extendedPath.append(edge)
+                                            print(f"Sub follow path routine resulted in a child that is an exit node")                                            
+                                            return extendedPath
+                                        else:
+                                            print("BUG: child in extended path, but not at the end of the path")
+                            if child not in extendedPath:
+                                print(f"child: {child}")
+                                
+                                visited.extend(extendedPath)
+                                self.followSubPath(child, extendedPath, tempGraph=tempGraph)
+
+                        print(f"Subpath has children| {currentNode}:{children}")
+                        
                         #self.followSubPath(path, visited=visited.extend(extendedPath), tempGraph=tempGraph)
                     else:
                         if tempGraph[currentNode][0] not in extendedPath:
@@ -91,13 +108,12 @@ class CreateContigs:
         if visited is None:
             visited = []
         unfinishedPaths = []
-        finishedPaths = []
         stack = [startNode]
         tempGraph = self.graph.copy()
         print(f"Start Node: {startNode}")
         while stack:
             currentNode = stack.pop()
-            print(f"Current Node: {currentNode}")
+            #print(f"Current Node: {currentNode}")
 
             if type(currentNode) == list:  # handling case of second iteration on.
                 currentNode = currentNode[0]
@@ -114,11 +130,9 @@ class CreateContigs:
 
             if currentNode not in visited:
                 visited.append(currentNode)
-                print(f"Path: {visited}")
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode == True:
                     #print(f"Final Path: {visited}\n")
-                    finishedPaths.append(visited)
                     print(f"Finalized Path: {visited}")
                     return visited
                 else:
@@ -136,7 +150,6 @@ class CreateContigs:
                         print("Children: ", children)
                         unfinishedPaths.append((visited, children))
         
-        print(f"Done with first walk. Number of finsihed paths: {len(finishedPaths)}\n")
         print(f"Number of unfinished paths: {len(unfinishedPaths)}\n")
         # Recursively call followPath for each unfinished path
         for path, children in unfinishedPaths:
@@ -175,6 +188,8 @@ class CreateContigs:
                 incoming += 1
             if edgesCount[i][1] == 0:
                 outgoing += 1
+        '''with open('edgesCount.json', 'w') as file:
+            json.dump(edgesCount, file)'''
         print(f"incoming: {incoming}")
         print(f"outgoing {outgoing}")
         
