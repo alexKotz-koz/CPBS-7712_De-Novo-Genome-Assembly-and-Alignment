@@ -6,7 +6,7 @@ class CreateContigs:
         self.finalGraph = []
         self.allPaths = []
         self.edgesCount = {}
-
+        self.count = 0
     # Input: edge list from readsToKmers
     # Output: a list of all start nodes (nodes that only have outgoing edges)
     def findStartNodes(self, inputGraph):
@@ -15,10 +15,6 @@ class CreateContigs:
         edgesCount = {}
         startNodes = []
         for edge in inputGraph.items():
-            #print('edge', edge)
-            #print('edge[0]: ',edge[0])
-            
-            #print('edge[1]: ', edge[1])
             # first node in the tuple has an outgoing edge
             if edge[0] in edgesCount:
                 edgesCount[edge[0]][1] += 1
@@ -26,7 +22,6 @@ class CreateContigs:
                 edgesCount[edge[0]] = [0,1] #[incoming, outgoing]
             
             for suffix in edge[1]:
-                #print('suffix: ', suffix)
                 if suffix in edgesCount:
                     edgesCount[suffix][0] += 1
                 else:
@@ -36,93 +31,172 @@ class CreateContigs:
         for edge in edgesCount.items():
             if edge[1][0] == 0:
                 startNodes.append(edge[0])
-            
-            
-        #print("edgecount: ", edgesCount)
-        # Initialize a list to store the start edges
 
-        '''# Iterate over the edges
-        for edge in inputGraph:
-            # If the first node in the edge is not in edges_count or has zero incoming edges
-            if edge[0] not in edgesCount or edgesCount[edge[0]][0] == 0:
-                # Add the edge to the start_edges list
-                startEdges.append(edge)'''
-
-
-        '''
-        #This is for start node identification via sets
-
-        sourceNodes = set()
-        targetNodes = set()
-        # get source and target nodes for each edge to find all nodes that only have outgoing edges
-        for edge in inputGraph:
-            sourceNodes.add(edge[0])
-            targetNodes.add(edge[1])
-
-        #print("in findStartNodes, source: ", sourceNodes)
-        #print("in findStartNodes, target: ", targetNodes)
-        # start nodes only exist in the source nodes, so subtracting the two sets return the start nodes
-        startNodes = sourceNodes-targetNodes
-        #print('start nodes: ', startNodes)
-        '''
         self.edgesCount = edgesCount
         return edgesCount, startNodes
 
+    def checkIfLastNode(self, currentNode, tempGraph):
+        #print("Checking if last node...")
+        if currentNode not in tempGraph:
+            for edge in self.edgesCount:
+                if currentNode == edge:
+                    #print(self.edgesCount[edge][1])
+                    if self.edgesCount[edge][1] == 0:
+                        return True
+        return False  # Return False if the node has unvisited neighbors
+    
+    def lookForChildren(self, currentNode, tempGraph):
+        if len(tempGraph[currentNode]) > 1:
+            return True, tempGraph[currentNode]
+        else:
+            return False, []
+    
+    def followSubPath(self,startNode, visited, tempGraph):
+        extendedPath = []
+        stack = [startNode]
+        print(f"FU follow path. Current unfinished path: {visited}")
+        print(f"FU extended path.......................: {extendedPath}")
+        print(f"FU Start Node: {startNode}")
+        while stack:
+            currentNode = stack.pop()
+            if type(currentNode) == list:
+                currentNode = currentNode[0]
+            if currentNode not in extendedPath:
+                extendedPath.append(currentNode)
+                print(f"Current: {extendedPath}")
+                isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
+                if isLastNode:
+                    
+                    visited.extend(extendedPath)
+                    print(F"Final Extended Path: {extendedPath}")
+                    return extendedPath
+                else:
+                    hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
+                    if hasChildren:
+                        print(f"Subpath has children| {currentNode}:{children}")
+                        for child in children:
+                            
+                            visited.extend(extendedPath)
+                            
+                            self.followSubPath(child, extendedPath, tempGraph=tempGraph)
+                        #self.followSubPath(path, visited=visited.extend(extendedPath), tempGraph=tempGraph)
+                    else:
+                        if tempGraph[currentNode][0] not in extendedPath:
+                            stack.extend(tempGraph[currentNode])
+
+
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
-    def followPath(self, startNode):
-        paths = []
+    def followPath(self, startNode, visited=None):
+        if visited is None:
+            visited = []
+        unfinishedPaths = []
+        finishedPaths = []
         stack = [startNode]
-        visited = []
         tempGraph = self.graph.copy()
-        #print(tempGraph)
+        print(f"Start Node: {startNode}")
         while stack:
-            print(f"stack: {stack}")
-            
             currentNode = stack.pop()
-            #print(f"current node: {currentNode}")
+            print(f"Current Node: {currentNode}")
+
+            if type(currentNode) == list:  # handling case of second iteration on.
+                currentNode = currentNode[0]
+
+            '''if currentNode in visited:
+                print("Cycle detected")
+                print(currentNode)
+                print(visited)
+                cycleStart = visited.index(currentNode)
+                cycle = visited[cycleStart:]
+                print(cycleStart)
+                print(cycle)'''
+
+
             if currentNode not in visited:
                 visited.append(currentNode)
-                #print(f"visited: {visited}")
+                print(f"Path: {visited}")
+                isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
+                if isLastNode == True:
+                    #print(f"Final Path: {visited}\n")
+                    finishedPaths.append(visited)
+                    print(f"Finalized Path: {visited}")
+                    return visited
+                else:
+                    hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
+                    if hasChildren == False:
+                        print(f"Current Node has one child. Child Nodes: {tempGraph[currentNode]}")
+                        if tempGraph[currentNode][0] not in visited:
+                            #print(tempGraph[currentNode])
+                            stack.extend(tempGraph[currentNode])
+                            print(f"Add child to stack: {stack}\n")
+                    if hasChildren:
+                        print(f"Current Node has children. Child Nodes:{tempGraph[currentNode]}\n")
+                        #print(f"split found @ {currentNode}:{tempGraph[currentNode]}")
+                        #print(f"unfinishedPath: {visited}\n")
+                        print("Children: ", children)
+                        unfinishedPaths.append((visited, children))
+        
+        print(f"Done with first walk. Number of finsihed paths: {len(finishedPaths)}\n")
+        print(f"Number of unfinished paths: {len(unfinishedPaths)}\n")
+        # Recursively call followPath for each unfinished path
+        for path, children in unfinishedPaths:
+            print(f"unfinished paths children: {children}")
+            for child in children:
+                visited = self.followSubPath(child, visited=path, tempGraph=tempGraph)
+                return visited
+        if self.checkIfLastNode(currentNode=visited[-1], tempGraph=tempGraph):
+            return visited
+        else:
+            return None
+        #return visited
+        '''while stack:
+            currentNode = stack.pop()
+            if currentNode not in visited:
+                visited.append(currentNode)
 
                 ## Check if last node in the path
-                if currentNode not in tempGraph:
-                    for edge in self.edgesCount:
-                        if currentNode == edge:
-                            #print(f"edge in edgesCount: {self.edgesCount[edge]}")
-                            if self.edgesCount[edge][1] == 0:
-                                return visited
-                            
-
+                isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
+                if isLastNode == True:
+                    print(f"Final Path: {visited}")
+                    return visited
                 # add the neighboors of the currentNode to the stack (if the neighboors are not already visited)
-                stack.extend([node for node in tempGraph[currentNode] if node not in visited])
-                print(tempGraph[currentNode])
-
-        
-    
-
+                stack.extend([node for node in tempGraph[currentNode] if node not in visited])'''
+            
     # Input: graph (edge list)
     # Output: contiguous sequences
     def createContigs(self):
         inputGraph = self.graph
 
         edgesCount, startNodes = self.findStartNodes(inputGraph)
-        print("Number of starting nodes: ", len(startNodes))
-
+        incoming = 0
+        outgoing = 0
+        for i in edgesCount:
+            if edgesCount[i][0] == 0:
+                incoming += 1
+            if edgesCount[i][1] == 0:
+                outgoing += 1
+        print(f"incoming: {incoming}")
+        print(f"outgoing {outgoing}")
+        
         contigs = []
         contigIndexTable = {}
         #print(inputGraph)
 
-        for node in startNodes[:3]:
+        for node in startNodes[:2]:
             visited = self.followPath(node)
-            print("\n")
             self.allPaths.append(visited)
-            
+            #print(visited)
+        print("\nIn CREATE CONTIGS\n")
+        print(f"Number of paths: {len(self.allPaths)}")
+
+        for path in self.allPaths:
+            print(f"Path in allPaths: {path}")
+        
 
         for path in self.allPaths:
             contig = []
             contigStr = ""
-
+            #print(f"Path: {path}")
             for node in path:
                 if len(contig) == 0:
                     contig.append(node)
