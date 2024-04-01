@@ -27,6 +27,7 @@ class DeBruijnGraph:
         edges = {}
         edges2 = []
         edges3 = {}
+        edges4 = {}
         nodes = set()
         
         # get the prefix and suffix of each kmer and add to the nodes and edges data structures
@@ -40,6 +41,11 @@ class DeBruijnGraph:
             else:
                 edges3[prefix].append(suffix)
 
+            if prefix not in edges4:
+                edges4[prefix] = [suffix]
+            else:
+                edges4[prefix].append(suffix)
+
             nodes.add(prefix)
             nodes.add(suffix)
         # logic to visualize the graph, if "True" is pass with the run command (python3 main.py True) then the graph is shown
@@ -50,6 +56,7 @@ class DeBruijnGraph:
                 Graph.add_edges_from(edges)
             nx.draw(Graph, with_labels=True)
             plt.show()
+        
         return nodes, edges3
 
         

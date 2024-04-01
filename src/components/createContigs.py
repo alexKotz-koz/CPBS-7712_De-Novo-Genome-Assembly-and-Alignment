@@ -63,44 +63,32 @@ class CreateContigs:
                 currentNode = currentNode[0]
             if currentNode not in extendedPath:
                 extendedPath.append(currentNode)
-                print(f"Current: {extendedPath}")
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode:
-                    
                     visited.extend(extendedPath)
-                    print(F"Final Extended Path: {extendedPath}")
-                    return extendedPath
+                    return visited
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren:
-                        # if either of the children are exit nodes,
                         for child in children:
-                            for edge in self.edgesCount:
-                                if child == edge:
-                                    if self.edgesCount[edge][1] == 0:
-                                        visited.extend(extendedPath)
-                                        if edge == extendedPath[-1]:
-                                            print(f"Sub follow path routine resulted in a child that is an exit node")
-                                            return extendedPath
-                                        elif edge not in extendedPath:
-                                            extendedPath.append(edge)
-                                            print(f"Sub follow path routine resulted in a child that is an exit node")                                            
-                                            return extendedPath
-                                        else:
-                                            print("BUG: child in extended path, but not at the end of the path")
+                            isLastNode = self.checkIfLastNode(child, tempGraph)
+                            if isLastNode:
+                                if child not in extendedPath and child != extendedPath[-1]:
+                                    extendedPath.append(child)
+                                    visited.extend(extendedPath)                                         
+                                    return visited
+                                else:
+                                    print("BUG: child in extended path, but not at the end of the path")
                             if child not in extendedPath:
-                                print(f"child: {child}")
-                                
                                 visited.extend(extendedPath)
                                 self.followSubPath(child, extendedPath, tempGraph=tempGraph)
-
-                        print(f"Subpath has children| {currentNode}:{children}")
-                        
-                        #self.followSubPath(path, visited=visited.extend(extendedPath), tempGraph=tempGraph)
                     else:
                         if tempGraph[currentNode][0] not in extendedPath:
                             stack.extend(tempGraph[currentNode])
+            elif currentNode in extendedPath:
+                print(f"possible loop, currentNode: {currentNode}, current path {extendedPath}")
 
+        
 
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
@@ -108,6 +96,7 @@ class CreateContigs:
         if visited is None:
             visited = []
         unfinishedPaths = []
+        subPaths = []
         stack = [startNode]
         tempGraph = self.graph.copy()
         print(f"Start Node: {startNode}")
@@ -117,16 +106,6 @@ class CreateContigs:
 
             if type(currentNode) == list:  # handling case of second iteration on.
                 currentNode = currentNode[0]
-
-            '''if currentNode in visited:
-                print("Cycle detected")
-                print(currentNode)
-                print(visited)
-                cycleStart = visited.index(currentNode)
-                cycle = visited[cycleStart:]
-                print(cycleStart)
-                print(cycle)'''
-
 
             if currentNode not in visited:
                 visited.append(currentNode)
@@ -138,29 +117,29 @@ class CreateContigs:
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren == False:
-                        print(f"Current Node has one child. Child Nodes: {tempGraph[currentNode]}")
+                        #print(f"Current Node has one child. Child Nodes: {tempGraph[currentNode]}")
                         if tempGraph[currentNode][0] not in visited:
                             #print(tempGraph[currentNode])
                             stack.extend(tempGraph[currentNode])
-                            print(f"Add child to stack: {stack}\n")
+                            #print(f"Add child to stack: {stack}\n")
                     if hasChildren:
                         print(f"Current Node has children. Child Nodes:{tempGraph[currentNode]}\n")
                         #print(f"split found @ {currentNode}:{tempGraph[currentNode]}")
                         #print(f"unfinishedPath: {visited}\n")
-                        print("Children: ", children)
+                        #print("Children: ", children)
                         unfinishedPaths.append((visited, children))
         
-        print(f"Number of unfinished paths: {len(unfinishedPaths)}\n")
         # Recursively call followPath for each unfinished path
         for path, children in unfinishedPaths:
-            print(f"unfinished paths children: {children}")
+            print(f"Follow Path: path ={path}, children={children}")
             for child in children:
-                visited = self.followSubPath(child, visited=path, tempGraph=tempGraph)
-                return visited
-        if self.checkIfLastNode(currentNode=visited[-1], tempGraph=tempGraph):
-            return visited
-        else:
-            return None
+                
+                print(f"Follow Path: Child = {child}")
+                print(f"Follow Path: path = {path}")
+                visited = self.followSubPath(child, visited=list(path), tempGraph=tempGraph)
+                print(f"Follow Path: sub path finished: {visited}\n")
+                self.allPaths.append(visited)
+
         #return visited
         '''while stack:
             currentNode = stack.pop()
@@ -179,7 +158,7 @@ class CreateContigs:
     # Output: contiguous sequences
     def createContigs(self):
         inputGraph = self.graph
-
+        print(inputGraph)
         edgesCount, startNodes = self.findStartNodes(inputGraph)
         incoming = 0
         outgoing = 0
@@ -198,8 +177,8 @@ class CreateContigs:
         #print(inputGraph)
 
         for node in startNodes[:2]:
-            visited = self.followPath(node)
-            self.allPaths.append(visited)
+            self.followPath(node)
+            
             #print(visited)
         print("\nIn CREATE CONTIGS\n")
         print(f"Number of paths: {len(self.allPaths)}")
