@@ -37,7 +37,7 @@ class CreateContigs:
         return edgesCount, startNodes
 
     def checkIfLastNode(self, currentNode, tempGraph):
-        #print("Checking if last node...")
+        
         if currentNode not in tempGraph:
             for edge in self.edgesCount:
                 if currentNode == edge:
@@ -51,42 +51,25 @@ class CreateContigs:
             return True, tempGraph[currentNode]
         else:
             return False, []
-    
-    def followSubPath(self,startNode, visited, tempGraph):
-        extendedPath = []
-        stack = [startNode]
-        print(f"FU follow path. Current unfinished path: {visited}")
-        print(f"FU Start Node: {startNode}")
+        
+    def followSubPath(self, startNode, originalPath, tempGraph):
+        stack = [(startNode, originalPath + [startNode])]
+        allPaths = []
+        
         while stack:
-            currentNode = stack.pop()
-            if type(currentNode) == list:
-                currentNode = currentNode[0]
-            if currentNode not in extendedPath:
-                extendedPath.append(currentNode)
-                isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
-                if isLastNode:
-                    visited.extend(extendedPath)
-                    return visited
-                else:
-                    hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
-                    if hasChildren:
-                        for child in children:
-                            isLastNode = self.checkIfLastNode(child, tempGraph)
-                            if isLastNode:
-                                if child not in extendedPath and child != extendedPath[-1]:
-                                    extendedPath.append(child)
-                                    visited.extend(extendedPath)                                         
-                                    return visited
-                                else:
-                                    print("BUG: child in extended path, but not at the end of the path")
-                            if child not in extendedPath:
-                                visited.extend(extendedPath)
-                                self.followSubPath(child, extendedPath, tempGraph=tempGraph)
+            currentNode, path = stack.pop()
+            print(f"FU startingNode: {currentNode}, originalPath: {originalPath}, path: {path}")
+            children = tempGraph.get(currentNode, [])
+            print(f"FU currentNode: {currentNode}, path:{path}, children of currentNode: {children}")
+            for child in children:
+                if child not in path:
+                    newPath = path + [child]  # create a new copy of path inside the loop
+                    if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
+                        allPaths.append(newPath)
                     else:
-                        if tempGraph[currentNode][0] not in extendedPath:
-                            stack.extend(tempGraph[currentNode])
-            elif currentNode in extendedPath:
-                print(f"possible loop, currentNode: {currentNode}, current path {extendedPath}")
+                        stack.append((child, newPath))
+
+        return allPaths
 
         
 
@@ -132,13 +115,15 @@ class CreateContigs:
         # Recursively call followPath for each unfinished path
         for path, children in unfinishedPaths:
             print(f"Follow Path: path ={path}, children={children}")
+            originalPath = path.copy()
             for child in children:
                 
                 print(f"Follow Path: Child = {child}")
                 print(f"Follow Path: path = {path}")
-                visited = self.followSubPath(child, visited=list(path), tempGraph=tempGraph)
+                visited = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
                 print(f"Follow Path: sub path finished: {visited}\n")
-                self.allPaths.append(visited)
+                for path in visited:
+                    self.allPaths.append(path)
 
         #return visited
         '''while stack:
