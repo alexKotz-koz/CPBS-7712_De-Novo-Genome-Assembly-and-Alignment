@@ -1,3 +1,4 @@
+.DS_Store
 /src/components/__pycache__
 /src/sandbox.py
 /src/test.csv
