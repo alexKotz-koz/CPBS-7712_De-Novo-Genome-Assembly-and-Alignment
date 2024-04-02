@@ -50,7 +50,7 @@ def importData(queryFile, readsFile):
 
 
 def main(k = None, showGraphArg=None):
-    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/DummyReads.fasta')
+    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/DummyReads2.fasta')
     print(f"User defined k: {k}")
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()

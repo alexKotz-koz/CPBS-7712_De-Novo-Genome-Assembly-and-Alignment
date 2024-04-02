@@ -58,9 +58,9 @@ class CreateContigs:
         
         while stack:
             currentNode, path = stack.pop()
-            print(f"FU startingNode: {currentNode}, originalPath: {originalPath}, path: {path}")
+            #print(f"FU startingNode: {currentNode}, originalPath: {originalPath}, path: {path}")
             children = tempGraph.get(currentNode, [])
-            print(f"FU currentNode: {currentNode}, path:{path}, children of currentNode: {children}")
+            #print(f"FU currentNode: {currentNode}, path:{path}, children of currentNode: {children}")
             for child in children:
                 if child not in path:
                     newPath = path + [child]  # create a new copy of path inside the loop
@@ -68,6 +68,10 @@ class CreateContigs:
                         allPaths.append(newPath)
                     else:
                         stack.append((child, newPath))
+                        print(f"stack: {stack}")
+                        print(f"FU current node to delete edge: {currentNode} | {tempGraph[currentNode]}")
+                        print(tempGraph)
+                        #del tempGraph[currentNode]
 
         return allPaths
 
@@ -91,7 +95,7 @@ class CreateContigs:
                 currentNode = currentNode[0]
 
             if currentNode not in visited:
-                visited.append(currentNode)
+                visited.append(currentNode) # current node added to visited
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode == True:
                     #print(f"Final Path: {visited}\n")
@@ -104,12 +108,11 @@ class CreateContigs:
                         if tempGraph[currentNode][0] not in visited:
                             #print(tempGraph[currentNode])
                             stack.extend(tempGraph[currentNode])
+                            print(f"current node to delete edge: {tempGraph[currentNode]}")
+                            del tempGraph[currentNode]
                             #print(f"Add child to stack: {stack}\n")
                     if hasChildren:
-                        print(f"Current Node has children. Child Nodes:{tempGraph[currentNode]}\n")
-                        #print(f"split found @ {currentNode}:{tempGraph[currentNode]}")
-                        #print(f"unfinishedPath: {visited}\n")
-                        #print("Children: ", children)
+                        print(f"Current Node: {currentNode} has children. Child Nodes:{tempGraph[currentNode]}\n")
                         unfinishedPaths.append((visited, children))
         
         # Recursively call followPath for each unfinished path
@@ -155,10 +158,6 @@ class CreateContigs:
         print(f"Number of paths: {len(self.allPaths)}")
 
         for path in self.allPaths:
-            print(f"Path in allPaths: {path}")
-        
-
-        for path in self.allPaths:
             contig = []
             contigStr = ""
             #print(f"Path: {path}")
@@ -172,6 +171,7 @@ class CreateContigs:
             contigs.append(contigStr)
         with open("contigs.txt", "w") as file:
             for contig in contigs:
+                print(f"Contig: {contig}")
                 file.write(contig + "\n")
 
         print('contigs len: ', [len(contig) for contig in contigs])
