@@ -57,10 +57,13 @@ class CreateContigs:
         allPaths = []
         
         while stack:
+            print(tempGraph)
             currentNode, path = stack.pop()
+            print(F"Current Node start while: {currentNode}\n")
             #print(f"FU startingNode: {currentNode}, originalPath: {originalPath}, path: {path}")
             children = tempGraph.get(currentNode, [])
             #print(f"FU currentNode: {currentNode}, path:{path}, children of currentNode: {children}")
+            childIterator = 0 
             for child in children:
                 if child not in path:
                     newPath = path + [child]  # create a new copy of path inside the loop
@@ -70,8 +73,8 @@ class CreateContigs:
                         stack.append((child, newPath))
                         print(f"stack: {stack}")
                         print(f"FU current node to delete edge: {currentNode} | {tempGraph[currentNode]}")
-                        print(tempGraph)
-                        #del tempGraph[currentNode]
+                        if childIterator == len(children):
+                            del tempGraph[currentNode]
 
         return allPaths
 

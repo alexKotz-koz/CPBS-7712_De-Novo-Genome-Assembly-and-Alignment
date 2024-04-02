@@ -2,7 +2,7 @@ class ReadsToKmers:
     def __init__(self, readsData, k):
         self.readsData = readsData
         if k == None:
-            self.k = 3
+            self.k = 10
         else:
             self.k = int(k)
         print(self.k)
