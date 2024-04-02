@@ -1,7 +1,11 @@
 class ReadsToKmers:
-    def __init__(self, readsData):
+    def __init__(self, readsData, k):
         self.readsData = readsData
-        self.k = 3
+        if k == None:
+            self.k = 3
+        else:
+            self.k = int(k)
+        print(self.k)
 
     # Input: Reads data
     # Ouput: kmerPool and k (length of kmers)

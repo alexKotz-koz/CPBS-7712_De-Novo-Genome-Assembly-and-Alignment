@@ -124,20 +124,6 @@ class CreateContigs:
                 print(f"Follow Path: sub path finished: {visited}\n")
                 for path in visited:
                     self.allPaths.append(path)
-
-        #return visited
-        '''while stack:
-            currentNode = stack.pop()
-            if currentNode not in visited:
-                visited.append(currentNode)
-
-                ## Check if last node in the path
-                isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
-                if isLastNode == True:
-                    print(f"Final Path: {visited}")
-                    return visited
-                # add the neighboors of the currentNode to the stack (if the neighboors are not already visited)
-                stack.extend([node for node in tempGraph[currentNode] if node not in visited])'''
             
     # Input: graph (edge list)
     # Output: contiguous sequences

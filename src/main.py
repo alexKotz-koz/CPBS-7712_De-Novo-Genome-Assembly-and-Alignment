@@ -49,9 +49,9 @@ def importData(queryFile, readsFile):
     return dfQueryData, dfReadsData
 
 
-def main(showGraphArg=None):
+def main(k = None, showGraphArg=None):
     queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/DummyReads.fasta')
-
+    print(f"User defined k: {k}")
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
@@ -60,7 +60,7 @@ def main(showGraphArg=None):
     #print(maxlen)
     #print(readsData.head())
     rtkStart = time.time()
-    readsToKmersInstance = ReadsToKmers(readsData=readsData)
+    readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
     #kmerPool = kmer table from reads
     #k = size of the kmers
     kmerPool, k = readsToKmersInstance.extractKmers()
@@ -82,7 +82,8 @@ def main(showGraphArg=None):
     print("Create Contigs completed in: ", ccStop-ccStart)
 if __name__ == "__main__":
     start = time.time()
-    arg1 = sys.argv[1] if len(sys.argv) > 1 else ''
-    main(arg1)
+    arg1K = sys.argv[1] if len(sys.argv) > 1 else '' 
+    arg2ShowGraph = sys.argv[2] if len(sys.argv) > 2 else ''
+    main(arg1K, arg2ShowGraph)
     end = time.time()
     print(f"Total Runtime:{end-start}")
