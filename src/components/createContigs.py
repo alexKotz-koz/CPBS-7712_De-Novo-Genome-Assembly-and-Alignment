@@ -57,38 +57,39 @@ class CreateContigs:
         allPaths = []
         
         while stack:
-            print(tempGraph)
             currentNode, path = stack.pop()
             print(F"Current Node start while: {currentNode}\n")
-            #print(f"FU startingNode: {currentNode}, originalPath: {originalPath}, path: {path}")
             children = tempGraph.get(currentNode, [])
-            #print(f"FU currentNode: {currentNode}, path:{path}, children of currentNode: {children}")
-            childIterator = 0 
-            for child in children:
+            for childIterator, child in enumerate(children):
                 if child not in path:
                     newPath = path + [child]  # create a new copy of path inside the loop
+                    print(f"FU child: {child}")
                     if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
+                        # tempGraph[currentNode][childIterator]
                         allPaths.append(newPath)
                     else:
                         stack.append((child, newPath))
-                        print(f"stack: {stack}")
-                        print(f"FU current node to delete edge: {currentNode} | {tempGraph[currentNode]}")
-                        if childIterator == len(children):
-                            del tempGraph[currentNode]
-
+                        print(f"FU child to delete: {currentNode}: {tempGraph[currentNode]} | {tempGraph[currentNode][childIterator]}")
+                        
+                        #del tempGraph[currentNode][childIterator]
+                        #print(f"FU @ end graph: {tempGraph}\n")
+                        '''if childIterator == len(children):
+                            del tempGraph[currentNode]'''
+        
+        
         return allPaths
 
         
 
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
-    def followPath(self, startNode, visited=None):
+    def followPath(self, startNode, inputGraph, visited=None):
         if visited is None:
             visited = []
         unfinishedPaths = []
         subPaths = []
         stack = [startNode]
-        tempGraph = self.graph.copy()
+        tempGraph = inputGraph
         print(f"Start Node: {startNode}")
         while stack:
             currentNode = stack.pop()
@@ -111,22 +112,23 @@ class CreateContigs:
                         if tempGraph[currentNode][0] not in visited:
                             #print(tempGraph[currentNode])
                             stack.extend(tempGraph[currentNode])
-                            print(f"current node to delete edge: {tempGraph[currentNode]}")
-                            del tempGraph[currentNode]
-                            #print(f"Add child to stack: {stack}\n")
+                            print(f"current node to delete edge:{currentNode} | {tempGraph[currentNode]}")
+                            #del tempGraph[currentNode]
                     if hasChildren:
                         print(f"Current Node: {currentNode} has children. Child Nodes:{tempGraph[currentNode]}\n")
                         unfinishedPaths.append((visited, children))
         
-        # Recursively call followPath for each unfinished path
+        print(f"\nTempGraph after part 1: {tempGraph}\n")
+
         for path, children in unfinishedPaths:
-            print(f"Follow Path: path ={path}, children={children}")
+            #print(f"Follow Path: path ={path}, children={children}")
             originalPath = path.copy()
             for child in children:
                 
-                print(f"Follow Path: Child = {child}")
-                print(f"Follow Path: path = {path}")
+                #print(f"Follow Path: Child = {child}")
+                #print(f"Follow Path: path = {path}")
                 visited = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
+                print(f"Follow Path: tempGraph after subpath finsihed: {tempGraph}")
                 print(f"Follow Path: sub path finished: {visited}\n")
                 for path in visited:
                     self.allPaths.append(path)
@@ -153,8 +155,8 @@ class CreateContigs:
         contigIndexTable = {}
         #print(inputGraph)
 
-        for node in startNodes[:2]:
-            self.followPath(node)
+        for node in startNodes:
+            self.followPath(node, inputGraph)
             
             #print(visited)
         print("\nIn CREATE CONTIGS\n")
@@ -163,7 +165,7 @@ class CreateContigs:
         for path in self.allPaths:
             contig = []
             contigStr = ""
-            #print(f"Path: {path}")
+            print(f"Path: {path}")
             for node in path:
                 if len(contig) == 0:
                     contig.append(node)

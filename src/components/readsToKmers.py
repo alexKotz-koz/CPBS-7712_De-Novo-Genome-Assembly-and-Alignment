@@ -40,5 +40,6 @@ class ReadsToKmers:
         most_common_kmer, ids = sorted_kmerPool[-1]
 
         print(f"The kmer that appears most is: {most_common_kmer}")     '''   
+        #print(kmerPool)
         return kmerPool, k    
     
