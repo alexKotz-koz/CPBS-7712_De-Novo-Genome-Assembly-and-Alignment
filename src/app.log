@@ -1,0 +1,21 @@
+In createContigs...
+Number of start nodes: 48
+Number of end nodes: 50
+followPath finished in: 0.0019500255584716797
+followPath finished in: 0.001981019973754883
+followPath finished in: 0.00022101402282714844
+followPath finished in: 0.00011277198791503906
+followPath finished in: 5.1975250244140625e-05
+followPath finished in: 0.00072479248046875
+followPath finished in: 0.0003581047058105469
+All walks finished in: 0.01026010513305664
+Total number of contigs: [75]
+
+Average contig length: 201.62666666666667
+
+Minimum contig length: 35
+
+Maximum contig length: 251
+
+createContigs completed in: 0.012228727340698242
+

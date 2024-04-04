@@ -1,6 +1,10 @@
 import pandas as pd
 from itertools import dropwhile
 import json
+import logging
+import time
+logging.basicConfig(filename='app.log', filemode='w', format='%(message)s', level=logging.INFO)
+
 class CreateContigs:
     def __init__(self, graph):
         self.graph = graph
@@ -8,6 +12,7 @@ class CreateContigs:
         self.allPaths = []
         self.edgesCount = {}
         self.count = 0
+
     # Input: edge list from readsToKmers
     # Output: a list of all start nodes (nodes that only have outgoing edges)
     def findStartNodes(self, inputGraph):
@@ -41,7 +46,6 @@ class CreateContigs:
         if currentNode not in tempGraph:
             for edge in self.edgesCount:
                 if currentNode == edge:
-                    #print(self.edgesCount[edge][1])
                     if self.edgesCount[edge][1] == 0:
                         return True
         return False  # Return False if the node has unvisited neighbors
@@ -53,48 +57,34 @@ class CreateContigs:
             return False, []
         
     def followSubPath(self, startNode, originalPath, tempGraph):
+        start = time.time()
         stack = [(startNode, originalPath + [startNode])]
         allPaths = []
-        
         while stack:
             currentNode, path = stack.pop()
-            print(F"Current Node start while: {currentNode}\n")
             children = tempGraph.get(currentNode, [])
             for childIterator, child in enumerate(children):
                 if child not in path:
                     newPath = path + [child]  # create a new copy of path inside the loop
-                    print(f"FU child: {child}")
                     if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
-                        # tempGraph[currentNode][childIterator]
                         allPaths.append(newPath)
                     else:
                         stack.append((child, newPath))
-                        print(f"FU child to delete: {currentNode}: {tempGraph[currentNode]} | {tempGraph[currentNode][childIterator]}")
-                        
-                        #del tempGraph[currentNode][childIterator]
-                        #print(f"FU @ end graph: {tempGraph}\n")
-                        '''if childIterator == len(children):
-                            del tempGraph[currentNode]'''
-        
-        
-        return allPaths
 
-        
+        stop = time.time()
+        return allPaths
 
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
     def followPath(self, startNode, inputGraph, visited=None):
+        start = time.time()
         if visited is None:
             visited = []
         unfinishedPaths = []
-        subPaths = []
         stack = [startNode]
         tempGraph = inputGraph
-        print(f"Start Node: {startNode}")
         while stack:
             currentNode = stack.pop()
-            #print(f"Current Node: {currentNode}")
-
             if type(currentNode) == list:  # handling case of second iteration on.
                 currentNode = currentNode[0]
 
@@ -102,45 +92,36 @@ class CreateContigs:
                 visited.append(currentNode) # current node added to visited
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode == True:
-                    #print(f"Final Path: {visited}\n")
-                    print(f"Finalized Path: {visited}")
                     return visited
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren == False:
-                        #print(f"Current Node has one child. Child Nodes: {tempGraph[currentNode]}")
                         if tempGraph[currentNode][0] not in visited:
-                            #print(tempGraph[currentNode])
                             stack.extend(tempGraph[currentNode])
-                            print(f"current node to delete edge:{currentNode} | {tempGraph[currentNode]}")
-                            #del tempGraph[currentNode]
                     if hasChildren:
-                        print(f"Current Node: {currentNode} has children. Child Nodes:{tempGraph[currentNode]}\n")
                         unfinishedPaths.append((visited, children))
         
-        print(f"\nTempGraph after part 1: {tempGraph}\n")
-
         for path, children in unfinishedPaths:
-            #print(f"Follow Path: path ={path}, children={children}")
             originalPath = path.copy()
             for child in children:
-                
-                #print(f"Follow Path: Child = {child}")
-                #print(f"Follow Path: path = {path}")
                 visited = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
-                print(f"Follow Path: tempGraph after subpath finsihed: {tempGraph}")
-                print(f"Follow Path: sub path finished: {visited}\n")
                 for path in visited:
                     self.allPaths.append(path)
+                    
+        stop = time.time()
+        logging.info(f"\bfollowPath finished in: {stop-start}")
             
     # Input: graph (edge list)
     # Output: contiguous sequences
     def createContigs(self):
+        start = time.time()
+        logging.info("In createContigs...")
+
         inputGraph = self.graph
-        print(inputGraph)
         edgesCount, startNodes = self.findStartNodes(inputGraph)
         incoming = 0
         outgoing = 0
+
         for i in edgesCount:
             if edgesCount[i][0] == 0:
                 incoming += 1
@@ -148,24 +129,21 @@ class CreateContigs:
                 outgoing += 1
         '''with open('edgesCount.json', 'w') as file:
             json.dump(edgesCount, file)'''
-        print(f"incoming: {incoming}")
-        print(f"outgoing {outgoing}")
-        
+        logging.info(f"Number of start nodes: {incoming}")
+        logging.info(f"Number of end nodes: {outgoing}")
+
         contigs = []
         contigIndexTable = {}
-        #print(inputGraph)
 
+        walkStart = time.time()
         for node in startNodes:
             self.followPath(node, inputGraph)
-            
-            #print(visited)
-        print("\nIn CREATE CONTIGS\n")
-        print(f"Number of paths: {len(self.allPaths)}")
+        walkEnd = time.time()
+        logging.info(f"All walks finished in: {walkEnd-walkStart}")
 
         for path in self.allPaths:
             contig = []
             contigStr = ""
-            print(f"Path: {path}")
             for node in path:
                 if len(contig) == 0:
                     contig.append(node)
@@ -174,22 +152,17 @@ class CreateContigs:
         
             contigStr = ''.join(contig)       
             contigs.append(contigStr)
+
         with open("contigs.txt", "w") as file:
             for contig in contigs:
-                print(f"Contig: {contig}")
                 file.write(contig + "\n")
 
-        print('contigs len: ', [len(contig) for contig in contigs])
-        print('number of contigs:', len(contigs))
+        stop = time.time()
+        avgLen = sum(len(contig) for contig in contigs) / len(contigs)
+        logging.info(f"Total number of contigs: {[len(contigs)]}\n")
+        logging.info(f"Average contig length: {avgLen}\n")
+        logging.info(f"Minimum contig length: {len(min(contigs, key=len))}\n")
+        logging.info(f"Maximum contig length: {len(max(contigs, key=len))}\n")
+        logging.info(f"createContigs completed in: {stop-start}\n")
+
         return contigs
-        
-
-
-'''
-PSEUDOCODE for CONTIG CREATION:
-for each node in edges:
-    if any given node only exists in the first position of the edge pair (i.e. is a starting node), mark as a starting node.
-    if any given node only exists in the second position of the edge pair (i.e. is an ending node), mark as an ending node.
-    if any path repeats, collapse (i.e. only take one path thru the loop and break at the last node).
-
-'''

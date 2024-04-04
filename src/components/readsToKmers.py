@@ -1,11 +1,7 @@
 class ReadsToKmers:
     def __init__(self, readsData, k):
         self.readsData = readsData
-        if k == None:
-            self.k = 10
-        else:
-            self.k = int(k)
-        print(self.k)
+        self.k = int(k)
 
     # Input: Reads data
     # Ouput: kmerPool and k (length of kmers)
@@ -32,14 +28,5 @@ class ReadsToKmers:
                         kmerPool[kmer][id] = [{index:index+k}]
                     else:
                         kmerPool[kmer][id].append({index:index+k})
-                    
-        '''# Sort the kmerPool by the number of unique ids associated with each kmer
-        sorted_kmerPool = sorted(kmerPool.items(), key=lambda item: len(item[1]))
-
-        # The kmer that appears most is the last item in the sorted list
-        most_common_kmer, ids = sorted_kmerPool[-1]
-
-        print(f"The kmer that appears most is: {most_common_kmer}")     '''   
-        #print(kmerPool)
         return kmerPool, k    
     

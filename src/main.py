@@ -3,11 +3,13 @@ import numpy as np
 import os
 import time
 import sys
+import argparse
 
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
 from components.createContigs import CreateContigs
 from components.searchString import SearchString
+from reads_in_contigs import numberOfReadsInContigs
 
 def importData(queryFile, readsFile):
     query = ""
@@ -49,29 +51,38 @@ def importData(queryFile, readsFile):
     return dfQueryData, dfReadsData
 
 
-def main(k = None, showGraphArg=None):
-    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/DummyReads2.fasta')
-    print(f"User defined k: {k}")
+def main():
+
+    parser = argparse.ArgumentParser(description="De Novo Genome Assembler")
+    parser.add_argument('--k', type=int, help='Size of k')
+    parser.add_argument('--graph', type=bool, default=False, help='boolean: Show graph or not')
+    parser.add_argument('--readsFile', type=str, default=None,help='Reads file for testing the number of reads in contigs')
+
+    args = parser.parse_args()
+
+    k = args.k
+    showGraphArg = args.graph
+    readsFile = args.readsFile
+
+    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/READS_Subset.fasta')
+    print(f"User defined k: {k}\n")
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
     print(minlen)
-    #print(maxlen)
-    #print(readsData.head())
+    print(maxlen)
     rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
-    #kmerPool = kmer table from reads
-    #k = size of the kmers
     kmerPool, k = readsToKmersInstance.extractKmers()
     rtkStop = time.time()
-    print("ReadsToKmer completed in: ", rtkStop-rtkStart)
+    print(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
 
     dbgStart = time.time()
     debruijnGraphInstance = DeBruijnGraph(kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
     nodes, edges = debruijnGraphInstance.constructGraph()
     dbgStop = time.time()
-    print("DeBruijnGraph completed in: ", dbgStop-dbgStart)
+    print(f"DeBruijnGraph completed in: {dbgStop-dbgStart}\n")
     #print("In Main after DBG, nodes: ", nodes)
     #print("In Main after DBG, edges: ", edges)
 
@@ -79,11 +90,12 @@ def main(k = None, showGraphArg=None):
     createContigsInstance = CreateContigs(graph=edges)
     createContigsInstance.createContigs()
     ccStop = time.time()
-    print("Create Contigs completed in: ", ccStop-ccStart)
+    print(f"Create Contigs completed in: {ccStop-ccStart}\n")
+
+    numberOfReadsInContigs(readsFile=readsFile)
+
 if __name__ == "__main__":
     start = time.time()
-    arg1K = sys.argv[1] if len(sys.argv) > 1 else '' 
-    arg2ShowGraph = sys.argv[2] if len(sys.argv) > 2 else ''
-    main(arg1K, arg2ShowGraph)
+    main()
     end = time.time()
-    print(f"Total Runtime:{end-start}")
+    print(f"\nTotal Runtime:{end-start}\n")

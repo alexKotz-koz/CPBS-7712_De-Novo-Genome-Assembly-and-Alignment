@@ -5,12 +5,14 @@
 
 The outline of this project is as follows:
 - Read in a set of next generation sequence (NGS) reads and a query sequence.
+    - Strengths and limitations
 - Break each of the NGS sequence reads into k-mers (all possible substrings of length k that are contained in a string).
 - Construct a [De Bruijn Graph](https://en.wikipedia.org/wiki/De_Bruijn_graph) using the prefix and suffix of each k-mer. [Concept Overview](https://www.youtube.com/watch?v=TNYZZKrjCSk&list=PL2mpR0RYFQsBiCWVJSvVAO3OJ2t7DzoHA&index=51). 
 - Construct contigs (contiguous sequences) by following all possible paths through the De Brujin Graph.
 - Search each contig for the query string.
 - Return the longest contig that contains the query string.
 
+*Add all decision
 
 ## Installation
 
@@ -50,3 +52,16 @@ python3 main.py True
     - This project has been tested with python 3.9 thru 3.12.
 - Miniconda (see Installation section for further instructions).
 - macOS or Linux based operating system.
+
+## Test graph visual
+Here is a simple flow chart:
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+
+*Cite collaboration with Aishwarya 
