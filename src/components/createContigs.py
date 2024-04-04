@@ -57,30 +57,20 @@ class CreateContigs:
             return False, []
         
     def followSubPath(self, startNode, originalPath, tempGraph):
-        print(f"FU originalPath: {originalPath}")
-        print(f"FU Start Node:{startNode}")
         start = time.time()
         stack = [(startNode, originalPath + [startNode])]
         allPaths = []
         while stack:
             currentNode, path = stack.pop()
-            print(f"FU currentNode: {currentNode}")
-            print(f"FU  current Path: {path}")
             if self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph):
-                print(f"FU isLastNode. Final path check: {path}\n")
                 allPaths.append(path)
                 continue
             children = tempGraph.get(currentNode, [])
-            print(f"FU children:{children}")
-            for childIterator, child in enumerate(children):
-                print(f"FU child: {child}")                
-                print(f"FU child path: {path}")
-            
+            for childIterator, child in enumerate(children):            
                 if path.count(child) < 2:
                     newPath = path + [child]  # create a new copy of path inside the loop
                     if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
                         allPaths.append(newPath)
-                        print(f"Path finished: {newPath}\n")
                     else:
                         stack.append((child, newPath))
 
@@ -170,7 +160,6 @@ class CreateContigs:
         with open("contigs.txt", "w") as file:
             for contig in contigs:
                 file.write(contig + "\n")
-                print(f"Contig: {contig}")
 
         stop = time.time()
         try:
