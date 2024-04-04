@@ -43,9 +43,9 @@ python3 main.py [options]
 ```
 Options:
 - `-h, --help`: Show help menu
-- `-k, --kmerSize`: Size of k
-- `-graph, --showGraph`: Show graph or not
-- `-reads, --readsFileCheck`: Reads file for testing the number of reads in all contigs
+- `-k`: Size of k
+- `--graph`: Show graph or not
+- `--readsFile`: Reads file for testing the number of reads in all contigs
 
 
 - Note: Visualizing a large graph will take a significant amount of time to generate. Recommended to visualize a subset of the original data for reasonable runtime. 

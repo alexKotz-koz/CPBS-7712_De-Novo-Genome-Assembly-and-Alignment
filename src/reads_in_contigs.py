@@ -14,6 +14,9 @@ def import_reads(readsFile):
     return readsData
 
 def numberOfReadsInContigs(readsFile):
+    if readsFile == None:
+        print("No reads file provided, using default reads file")
+    readsFile = 'READS_Subset.fasta'
     readsData = import_reads(readsFile=readsFile)
     # Open the contigs file
     with open('contigs.txt', 'r') as contigs_file:

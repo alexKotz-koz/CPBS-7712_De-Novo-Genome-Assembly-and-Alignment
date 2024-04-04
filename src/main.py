@@ -54,9 +54,9 @@ def importData(queryFile, readsFile):
 def main():
 
     parser = argparse.ArgumentParser(description="De Novo Genome Assembler")
-    parser.add_argument('k', '--kmerSize', type=int, help='Size of k', required=True)
-    parser.add_argument('-graph', '--showGraph', type=bool, default=False, help='boolean: Show graph or not')
-    parser.add_argument('-reads','--readsFileCheck', type=str, default=None,help='Reads file for testing the number of reads in all contigs')
+    parser.add_argument('-k', type=int, help='Size of k', required=True)
+    parser.add_argument('--graph', type=bool, default=False, help='boolean: Show graph or not')
+    parser.add_argument('--readsFile', type=str, default=None,help='Reads file for testing the number of reads in all contigs')
 
     args = parser.parse_args()
 
