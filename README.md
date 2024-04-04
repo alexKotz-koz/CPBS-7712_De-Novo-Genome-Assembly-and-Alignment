@@ -64,4 +64,3 @@ graph TD;
     C-->D;
 ```
 
-*Cite collaboration with Aishwarya 
