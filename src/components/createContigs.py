@@ -57,17 +57,30 @@ class CreateContigs:
             return False, []
         
     def followSubPath(self, startNode, originalPath, tempGraph):
+        print(f"FU originalPath: {originalPath}")
+        print(f"FU Start Node:{startNode}")
         start = time.time()
         stack = [(startNode, originalPath + [startNode])]
         allPaths = []
         while stack:
             currentNode, path = stack.pop()
+            print(f"FU currentNode: {currentNode}")
+            print(f"FU  current Path: {path}")
+            if self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph):
+                print(f"FU isLastNode. Final path check: {path}\n")
+                allPaths.append(path)
+                continue
             children = tempGraph.get(currentNode, [])
+            print(f"FU children:{children}")
             for childIterator, child in enumerate(children):
-                if child not in path:
+                print(f"FU child: {child}")                
+                print(f"FU child path: {path}")
+            
+                if path.count(child) < 2:
                     newPath = path + [child]  # create a new copy of path inside the loop
                     if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
                         allPaths.append(newPath)
+                        print(f"Path finished: {newPath}\n")
                     else:
                         stack.append((child, newPath))
 
@@ -92,7 +105,8 @@ class CreateContigs:
                 visited.append(currentNode) # current node added to visited
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode == True:
-                    return visited
+                    self.allPaths.append(visited)
+                    continue
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren == False:
@@ -104,10 +118,10 @@ class CreateContigs:
         for path, children in unfinishedPaths:
             originalPath = path.copy()
             for child in children:
-                visited = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
-                for path in visited:
+                finishedPaths = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
+                for path in finishedPaths:
                     self.allPaths.append(path)
-                    
+
         stop = time.time()
         logging.info(f"\bfollowPath finished in: {stop-start}")
             
@@ -156,11 +170,16 @@ class CreateContigs:
         with open("contigs.txt", "w") as file:
             for contig in contigs:
                 file.write(contig + "\n")
+                print(f"Contig: {contig}")
 
         stop = time.time()
-        avgLen = sum(len(contig) for contig in contigs) / len(contigs)
+        try:
+            avgLen = sum(len(contig) for contig in contigs) / len(contigs)
+            logging.info(f"Average contig length: {avgLen}\n")
+        except ZeroDivisionError:
+            print("Length of contigs is 0, cannot calculate avg length of contig")
         logging.info(f"Total number of contigs: {[len(contigs)]}\n")
-        logging.info(f"Average contig length: {avgLen}\n")
+        
         logging.info(f"Minimum contig length: {len(min(contigs, key=len))}\n")
         logging.info(f"Maximum contig length: {len(max(contigs, key=len))}\n")
         logging.info(f"createContigs completed in: {stop-start}\n")
