@@ -4,6 +4,7 @@ def import_reads(readsFileInput):
     readsData = []
     file = readsFileInput
     readsFile =f"data/{file}"
+    print(readsFile)
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
         for index, line in enumerate(reads):
@@ -18,7 +19,6 @@ def numberOfReadsInContigs(readsFile):
     if readsFile == None:
         print("No reads file provided, using default reads file")
         readsFile = 'READS_Subset.fasta'
-    readsFile = (readsFile, True)
     readsData = import_reads(readsFile)
     # Open the contigs file
     with open('contigs.txt', 'r') as contigs_file:
