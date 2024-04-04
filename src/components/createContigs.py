@@ -96,7 +96,7 @@ class CreateContigs:
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
                 if isLastNode == True:
                     self.allPaths.append(visited)
-                    continue
+                    
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
                     if hasChildren == False:
@@ -111,6 +111,7 @@ class CreateContigs:
                 finishedPaths = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
                 for path in finishedPaths:
                     self.allPaths.append(path)
+                    
 
         stop = time.time()
         logging.info(f"\bfollowPath finished in: {stop-start}")
@@ -142,6 +143,8 @@ class CreateContigs:
         walkStart = time.time()
         for node in startNodes:
             self.followPath(node, inputGraph)
+            contigsFromNode = [path for path in self.allPaths if path[0] == node]
+            contigIndexTable[node] = contigsFromNode
         walkEnd = time.time()
         logging.info(f"All walks finished in: {walkEnd-walkStart}")
 
@@ -156,6 +159,9 @@ class CreateContigs:
         
             contigStr = ''.join(contig)       
             contigs.append(contigStr)
+
+        with open('contigIndexTable.json', 'w') as file:
+            json.dump(contigIndexTable, file)
 
         with open("contigs.txt", "w") as file:
             for contig in contigs:
@@ -173,4 +179,4 @@ class CreateContigs:
         logging.info(f"Maximum contig length: {len(max(contigs, key=len))}\n")
         logging.info(f"createContigs completed in: {stop-start}\n")
 
-        return contigs
+        return contigs, contigIndexTable

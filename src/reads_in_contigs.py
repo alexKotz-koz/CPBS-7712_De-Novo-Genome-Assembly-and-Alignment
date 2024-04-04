@@ -24,6 +24,7 @@ def numberOfReadsInContigs(readsFile):
         print("No reads file provided, using default reads file")
         readsFile = 'READS_Subset.fasta'
     readsData = import_reads(readsFile)
+    print("reads", len(readsData))
     # Open the contigs file
     with open('contigs.txt', 'r') as contigs_file:
         contigs = [line.strip() for line in contigs_file.readlines()]
@@ -34,4 +35,4 @@ def numberOfReadsInContigs(readsFile):
             total.append(1)
 
         # Print the number of reads for this contig
-    print(f"{sum(total)} reads in {len(total)} contigs")
+    print(f"{sum(total)} reads in {len(contigs)} contigs")

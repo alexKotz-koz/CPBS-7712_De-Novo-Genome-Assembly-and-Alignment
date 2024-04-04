@@ -32,6 +32,7 @@ def importData(queryFile, readsFile):
     #Import Reads File Data
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
+        
         for index,line in enumerate(reads):
             # identify the lines that contain the reads id's
             if ">" == line[0]:
@@ -70,6 +71,7 @@ def main():
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
+    
     rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
     kmerPool, k = readsToKmersInstance.extractKmers()
