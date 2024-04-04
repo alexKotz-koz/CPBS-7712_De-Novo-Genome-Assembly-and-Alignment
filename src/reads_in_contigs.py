@@ -3,7 +3,10 @@ import os
 def import_reads(readsFileInput):
     readsData = []
     file = readsFileInput
-    readsFile =f"data/{file}"
+    # Get the directory of the current script
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    # Build the file path
+    readsFile = os.path.join(script_dir, "data", file)
     print(readsFile)
     print(os.curdir)
     with open(readsFile, "r") as inputReadsFile:
