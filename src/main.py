@@ -70,8 +70,6 @@ def main():
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
-    print(minlen)
-    print(maxlen)
     rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
     kmerPool, k = readsToKmersInstance.extractKmers()

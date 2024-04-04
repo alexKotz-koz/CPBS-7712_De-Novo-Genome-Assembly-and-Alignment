@@ -1,9 +1,10 @@
-import subprocess
 import os
 
-def import_reads(readsFile):
+def import_reads(readsFileInput):
     readsData = []
-    with open(f"data/{readsFile}", "r") as inputReadsFile:
+    file = readsFileInput
+    readsFile =f"data/{file}"
+    with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
         for index, line in enumerate(reads):
             # identify the lines that contain the reads id's
@@ -16,13 +17,13 @@ def import_reads(readsFile):
 def numberOfReadsInContigs(readsFile):
     if readsFile == None:
         print("No reads file provided, using default reads file")
-    readsFile = 'READS_Subset.fasta'
-    readsData = import_reads(readsFile=readsFile)
+        readsFile = 'READS_Subset.fasta'
+    readsFile = (readsFile, True)
+    readsData = import_reads(readsFile)
     # Open the contigs file
     with open('contigs.txt', 'r') as contigs_file:
         contigs = [line.strip() for line in contigs_file.readlines()]
     total = []
-    print(contigs)
     # For each contig, count the number of matching reads
     for read in readsData:
         if read in contigs:
