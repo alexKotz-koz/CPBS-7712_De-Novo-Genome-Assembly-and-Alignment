@@ -5,6 +5,7 @@ def import_reads(readsFileInput):
     file = readsFileInput
     readsFile =f"data/{file}"
     print(readsFile)
+    print(os.curdir)
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
         for index, line in enumerate(reads):
