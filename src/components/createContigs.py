@@ -3,7 +3,6 @@ from itertools import dropwhile
 import json
 import logging
 import time
-logging.basicConfig(filename='app.log', filemode='w', format='%(message)s', level=logging.INFO)
 
 class CreateContigs:
     def __init__(self, graph):
@@ -57,7 +56,6 @@ class CreateContigs:
             return False, []
         
     def followSubPath(self, startNode, originalPath, tempGraph):
-        start = time.time()
         stack = [(startNode, originalPath + [startNode])]
         allPaths = []
         while stack:
@@ -73,8 +71,6 @@ class CreateContigs:
                         allPaths.append(newPath)
                     else:
                         stack.append((child, newPath))
-
-        stop = time.time()
         return allPaths
 
     # Input: start node and graph (edge list)
@@ -88,39 +84,42 @@ class CreateContigs:
         tempGraph = inputGraph
         while stack:
             currentNode = stack.pop()
+
             if type(currentNode) == list:  # handling case of second iteration on.
                 currentNode = currentNode[0]
 
             if currentNode not in visited:
                 visited.append(currentNode) # current node added to visited
                 isLastNode = self.checkIfLastNode(currentNode=currentNode, tempGraph=tempGraph)
+
                 if isLastNode == True:
                     self.allPaths.append(visited)
                     
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode, tempGraph=tempGraph)
+
                     if hasChildren == False:
                         if tempGraph[currentNode][0] not in visited:
                             stack.extend(tempGraph[currentNode])
+
                     if hasChildren:
                         unfinishedPaths.append((visited, children))
         
         for path, children in unfinishedPaths:
             originalPath = path.copy()
+
             for child in children:
                 finishedPaths = self.followSubPath(child, originalPath=originalPath, tempGraph=tempGraph)
                 for path in finishedPaths:
-                    self.allPaths.append(path)
-                    
+                    self.allPaths.append(path)       
 
         stop = time.time()
-        logging.info(f"\bfollowPath finished in: {stop-start}")
+        #print(f"followPath finished in: {stop-start}")
             
     # Input: graph (edge list)
     # Output: contiguous sequences
     def createContigs(self):
         start = time.time()
-        logging.info("In createContigs...")
 
         inputGraph = self.graph
         edgesCount, startNodes = self.findStartNodes(inputGraph)
@@ -146,7 +145,7 @@ class CreateContigs:
             contigsFromNode = [path for path in self.allPaths if path[0] == node]
             contigIndexTable[node] = contigsFromNode
         walkEnd = time.time()
-        logging.info(f"All walks finished in: {walkEnd-walkStart}")
+        logging.info(f"Graph traversal finished in: {walkEnd-walkStart}\n")
 
         for path in self.allPaths:
             contig = []
@@ -170,13 +169,12 @@ class CreateContigs:
         stop = time.time()
         try:
             avgLen = sum(len(contig) for contig in contigs) / len(contigs)
-            logging.info(f"Average contig length: {avgLen}\n")
+            logging.info(f"Average contig length: {avgLen}")
         except ZeroDivisionError:
             print("Length of contigs is 0, cannot calculate avg length of contig")
-        logging.info(f"Total number of contigs: {[len(contigs)]}\n")
+        logging.info(f"Total number of contigs: {[len(contigs)]}")
         
-        logging.info(f"Minimum contig length: {len(min(contigs, key=len))}\n")
-        logging.info(f"Maximum contig length: {len(max(contigs, key=len))}\n")
-        logging.info(f"createContigs completed in: {stop-start}\n")
+        logging.info(f"Minimum contig length: {len(min(contigs, key=len))}")
+        logging.info(f"Maximum contig length: {len(max(contigs, key=len))}")
 
         return contigs, contigIndexTable

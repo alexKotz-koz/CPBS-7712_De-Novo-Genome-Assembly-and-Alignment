@@ -4,12 +4,16 @@ import os
 import time
 import sys
 import argparse
+import logging
 
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
 from components.createContigs import CreateContigs
 from components.searchString import SearchString
 from reads_in_contigs import numberOfReadsInContigs
+
+logging.basicConfig(filename='app.log', filemode='w', format='%(message)s', level=logging.INFO)
+
 
 def importData(queryFile, readsFile):
     query = ""
@@ -53,6 +57,7 @@ def importData(queryFile, readsFile):
 
 
 def main():
+    logging.info("Main: ")
 
     parser = argparse.ArgumentParser(description="De Novo Genome Assembler")
     parser.add_argument('-k', type=int, help='Size of k', required=True)
@@ -66,31 +71,37 @@ def main():
     readsFile = args.readsFile
 
     queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/READS_Subset.fasta')
+    logging.info(f"Number of reads from READS.fasta: {len(readsData)}")
     print(f"User defined k: {k}\n")
+    logging.info(f"User defined size of k-mer: {k}\n")
     minR = readsData['length'].idxmin()
     maxR = readsData['length'].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
-    
+
+    logging.info(f"Shortest read: {minlen}\n")
+    logging.info(f"Longest read: {maxlen}\n")
+
     rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
     kmerPool, k = readsToKmersInstance.extractKmers()
     rtkStop = time.time()
     print(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
+    logging.info(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
 
     dbgStart = time.time()
     debruijnGraphInstance = DeBruijnGraph(kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
     nodes, edges = debruijnGraphInstance.constructGraph()
     dbgStop = time.time()
     print(f"DeBruijnGraph completed in: {dbgStop-dbgStart}\n")
-    #print("In Main after DBG, nodes: ", nodes)
-    #print("In Main after DBG, edges: ", edges)
+    logging.info(f"DeBruijnGraph completed in: {dbgStop-dbgStart}\n")
 
     ccStart = time.time()
     createContigsInstance = CreateContigs(graph=edges)
     createContigsInstance.createContigs()
     ccStop = time.time()
     print(f"Create Contigs completed in: {ccStop-ccStart}\n")
+    logging.info(f"Create Contigs completed in: {ccStop-ccStart}\n")
 
     numberOfReadsInContigs(readsFile=readsFile)
 
@@ -98,4 +109,5 @@ if __name__ == "__main__":
     start = time.time()
     main()
     end = time.time()
+    logging.info(f"Total Runtime:{end-start}\n")
     print(f"\nTotal Runtime:{end-start}\n")
