@@ -3,6 +3,7 @@ from itertools import dropwhile
 import json
 import logging
 import time
+import os
 
 class CreateContigs:
     def __init__(self, graph):
@@ -64,7 +65,8 @@ class CreateContigs:
                 allPaths.append(path)
                 continue
             children = tempGraph.get(currentNode, [])
-            for childIterator, child in enumerate(children):            
+            for childIterator, child in enumerate(children):     
+                # Does not cover case (two loops start and stop at the same node)       
                 if path.count(child) < 2:
                     newPath = path + [child]  # create a new copy of path inside the loop
                     if self.checkIfLastNode(currentNode=child, tempGraph=tempGraph):
@@ -76,7 +78,6 @@ class CreateContigs:
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
     def followPath(self, startNode, inputGraph, visited=None):
-        start = time.time()
         if visited is None:
             visited = []
         unfinishedPaths = []
@@ -113,13 +114,10 @@ class CreateContigs:
                 for path in finishedPaths:
                     self.allPaths.append(path)       
 
-        stop = time.time()
-        #print(f"followPath finished in: {stop-start}")
             
     # Input: graph (edge list)
     # Output: contiguous sequences
     def createContigs(self):
-        start = time.time()
 
         inputGraph = self.graph
         edgesCount, startNodes = self.findStartNodes(inputGraph)
@@ -131,8 +129,8 @@ class CreateContigs:
                 incoming += 1
             if edgesCount[i][1] == 0:
                 outgoing += 1
-        '''with open('edgesCount.json', 'w') as file:
-            json.dump(edgesCount, file)'''
+        with open('data/logs/edgesCount.json', 'w') as file:
+            json.dump(edgesCount, file)
         logging.info(f"Number of start nodes: {incoming}")
         logging.info(f"Number of end nodes: {outgoing}")
 
@@ -159,14 +157,13 @@ class CreateContigs:
             contigStr = ''.join(contig)       
             contigs.append(contigStr)
 
-        with open('contigIndexTable.json', 'w') as file:
+        with open('data/logs/contigIndexTable.json', 'w') as file:
             json.dump(contigIndexTable, file)
 
-        with open("contigs.txt", "w") as file:
+        with open("data/logs/contigs.txt", "w") as file:
             for contig in contigs:
                 file.write(contig + "\n")
 
-        stop = time.time()
         try:
             avgLen = sum(len(contig) for contig in contigs) / len(contigs)
             logging.info(f"Average contig length: {avgLen}")

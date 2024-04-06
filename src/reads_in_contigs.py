@@ -26,7 +26,7 @@ def numberOfReadsInContigs(readsFile):
     readsData = import_reads(readsFile)
     print("reads", len(readsData))
     # Open the contigs file
-    with open('contigs.txt', 'r') as contigs_file:
+    with open('data/logs/contigs.txt', 'r') as contigs_file:
         contigs = [line.strip() for line in contigs_file.readlines()]
     total = []
     # For each contig, count the number of matching reads

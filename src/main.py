@@ -12,7 +12,7 @@ from components.createContigs import CreateContigs
 from components.searchString import SearchString
 from reads_in_contigs import numberOfReadsInContigs
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(message)s', level=logging.INFO)
+logging.basicConfig(filename='data/logs/app.log', filemode='w', format='%(message)s', level=logging.INFO)
 
 
 def importData(queryFile, readsFile):
@@ -70,8 +70,8 @@ def main():
     showGraphArg = args.graph
     readsFile = args.readsFile
 
-    queryData, readsData = importData("./data/chatgptTestData/QUERY copy.fasta", './data/READS_Subset.fasta')
-    logging.info(f"Number of reads from READS.fasta: {len(readsData)}")
+    queryData, readsData = importData("./data/QUERY.fasta", './data/READS_Subset.fasta')
+    logging.info(f"Number of reads from {readsFile}: {len(readsData)}")
     print(f"User defined k: {k}\n")
     logging.info(f"User defined size of k-mer: {k}\n")
     minR = readsData['length'].idxmin()

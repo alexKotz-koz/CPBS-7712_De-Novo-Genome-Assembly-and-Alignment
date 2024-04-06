@@ -1,0 +1,30 @@
+Main: 
+Number of reads from None: 50
+User defined size of k-mer: 15
+
+Shortest read: id                             2S43D:03629:08794
+read      TTCAGGCTCTGGCATGCATTAGAAATGTGGCTTGTTTT
+length                                        38
+Name: 0, dtype: object
+
+Longest read: id                                        2S43D:07877:07497
+read      GGCTCCTCCACCTGGGAAGCCACCAGGCATTCCCCCAGGCATGCCA...
+length                                                  243
+Name: 20, dtype: object
+
+ReadsToKmer completed in: 0.0023338794708251953
+
+DeBruijnGraph completed in: 0.01382899284362793
+
+Number of start nodes: 48
+Number of end nodes: 50
+Graph traversal finished in: 0.011228084564208984
+
+Average contig length: 168.95081967213116
+Total number of contigs: [122]
+Minimum contig length: 35
+Maximum contig length: 251
+Create Contigs completed in: 0.0217437744140625
+
+Total Runtime:0.04048299789428711
+
