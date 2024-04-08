@@ -5,6 +5,7 @@ import time
 import sys
 import argparse
 import logging
+import cProfile
 
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
@@ -31,7 +32,7 @@ def importData(queryFile, readsFile):
             if ">" == line[0]:
                 # get the query string and the id, then place into queryData
                 queryString = query[index+1]
-                queryData.append({"id":line.lstrip('>').rstrip('\n'), "query": queryString.rstrip('\n')})
+                queryData.append({"id":line.lstrip('>').rstrip('\n'), "sequence": queryString.rstrip('\n')})
     
     #Import Reads File Data
     with open(readsFile, "r") as inputReadsFile:
@@ -42,15 +43,15 @@ def importData(queryFile, readsFile):
             if ">" == line[0]:
                 # get the actual read from the proceeding line, then append read and its ID to readsData
                 readString = reads[index+1]
-                readsData.append({"id":line.lstrip('>').rstrip('\n'), "read": readString.rstrip('\n')})
+                readsData.append({"id":line.lstrip('>').rstrip('\n'), "sequence": readString.rstrip('\n')})
     
     #convert queryData to dataframe and add a length column that is the length of the query string
     dfQueryData = pd.DataFrame(queryData)
-    dfQueryData['length'] = dfQueryData['query'].str.len()
+    dfQueryData['length'] = dfQueryData['sequence'].str.len()
     
     #convert readsData to dataframe and add a length column that is the length of each read string
     dfReadsData = pd.DataFrame(readsData)
-    dfReadsData['length'] = dfReadsData['read'].str.len()
+    dfReadsData['length'] = dfReadsData['sequence'].str.len()
 
 
     return dfQueryData, dfReadsData
@@ -69,8 +70,10 @@ def main():
     k = args.k
     showGraphArg = args.graph
     readsFile = args.readsFile
-
-    queryData, readsData = importData("./data/QUERY.fasta", './data/READS_Subset.fasta')
+    dataDir = './data'
+    readsFileLocation = os.path.join(dataDir, readsFile)
+    #queryData, readsData = importData("./data/QUERY.fasta", './data/DummyReads2.fasta')
+    queryData, readsData = importData("./data/QUERY.fasta", readsFileLocation)
     logging.info(f"Number of reads from {readsFile}: {len(readsData)}")
     print(f"User defined k: {k}\n")
     logging.info(f"User defined size of k-mer: {k}\n")
@@ -84,13 +87,13 @@ def main():
 
     rtkStart = time.time()
     readsToKmersInstance = ReadsToKmers(readsData=readsData, k=k)
-    kmerPool, k = readsToKmersInstance.extractKmers()
+    readsKmerPool, k = readsToKmersInstance.extractKmers()
     rtkStop = time.time()
     print(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
     logging.info(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
 
     dbgStart = time.time()
-    debruijnGraphInstance = DeBruijnGraph(kmerPool=kmerPool, k=k, showGraphArg=showGraphArg)
+    debruijnGraphInstance = DeBruijnGraph(kmerPool=readsKmerPool, k=k, showGraphArg=showGraphArg)
     nodes, edges = debruijnGraphInstance.constructGraph()
     dbgStop = time.time()
     print(f"DeBruijnGraph completed in: {dbgStop-dbgStart}\n")
@@ -98,15 +101,21 @@ def main():
 
     ccStart = time.time()
     createContigsInstance = CreateContigs(graph=edges)
-    createContigsInstance.createContigs()
+    contigs, contigIndexTable = createContigsInstance.createContigs()
     ccStop = time.time()
     print(f"Create Contigs completed in: {ccStop-ccStart}\n")
     logging.info(f"Create Contigs completed in: {ccStop-ccStart}\n")
 
+    ssStart = time.time()
+    searchStringInstance = SearchString(queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k)
+    searchStringInstance.align()
+
     numberOfReadsInContigs(readsFile=readsFile)
 
 if __name__ == "__main__":
+
     start = time.time()
+    #cProfile.run('main()')
     main()
     end = time.time()
     logging.info(f"Total Runtime:{end-start}\n")

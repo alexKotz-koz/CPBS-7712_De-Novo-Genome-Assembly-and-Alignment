@@ -7,8 +7,6 @@ def import_reads(readsFileInput):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     # Build the file path
     readsFile = os.path.join(script_dir, "data", file)
-    print(readsFile)
-    print(os.curdir)
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
         for index, line in enumerate(reads):

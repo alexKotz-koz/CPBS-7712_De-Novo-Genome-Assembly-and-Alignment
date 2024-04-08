@@ -14,7 +14,7 @@ class ReadsToKmers:
         for index, read in readsData.iterrows():
             # get the id and read from each row pair
             id = read['id']
-            sequence = read['read']
+            sequence = read['sequence']
             for index, base in enumerate(sequence):
                 # kmer = substring of the sequence (iteration number (index) to the index + k)
                 kmer = sequence[index:index+k]
