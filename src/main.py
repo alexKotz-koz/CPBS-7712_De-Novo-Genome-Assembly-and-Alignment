@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import time
-import sys
+import json
 import argparse
 import logging
 import cProfile
@@ -11,7 +11,8 @@ from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
 from components.createContigs import CreateContigs
 from components.searchString import SearchString
-from reads_in_contigs import numberOfReadsInContigs
+from components.output import Output
+from components.reads_in_contigs import numberOfReadsInContigs
 
 logging.basicConfig(filename='data/logs/app.log', filemode='w', format='%(message)s', level=logging.INFO)
 
@@ -108,15 +109,21 @@ def main():
 
     ssStart = time.time()
     searchStringInstance = SearchString(queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k)
-    searchStringInstance.align()
-
+    contigsInfo, contig, readsInContig = searchStringInstance.align()
+    with open('data/logs/contigsInfo.json', "w") as file:
+        json.dump(contigsInfo, file)
+    ssEnd = time.time()
+    print(f"Search String completed in: {ssEnd-ssStart}\n")
+    logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
+    
     numberOfReadsInContigs(readsFile=readsFile)
+    outputInstance = Output()
+    outputInstance.createOutput()
 
 if __name__ == "__main__":
 
     start = time.time()
-    #cProfile.run('main()')
     main()
     end = time.time()
-    logging.info(f"Total Runtime:{end-start}\n")
-    print(f"\nTotal Runtime:{end-start}\n")
+    logging.info(f"Total Runtime: {end-start}\n")
+    print(f"\nTotal Runtime: {end-start}\n")

@@ -37,7 +37,7 @@ class CreateContigs:
     '''
 
     def followSubPath(self, startNode, originalPath):
-        logging.info(f"Entering followSubPath with startNode: {startNode}")
+        #logging.info(f"Entering followSubPath with startNode: {startNode}")
 
         stack = deque([(startNode, originalPath + [startNode])])
         while stack:
@@ -60,7 +60,7 @@ class CreateContigs:
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
     def followPath(self, startNode, visited=None):
-        logging.info(f"Entering followPath with startNode: {startNode}")
+        #logging.info(f"Entering followPath with startNode: {startNode}")
 
         if visited is None:
             visited = deque([])
@@ -74,7 +74,7 @@ class CreateContigs:
                 visited.append(currentNode)
                 isLastNode = self.checkIfLastNode(currentNode=currentNode)
                 if isLastNode == True:
-                    self.allPaths.append(visited)       
+                    yield visited       
                 else:
                     hasChildren, children = self.lookForChildren(currentNode=currentNode)
                     if hasChildren == False:
@@ -87,8 +87,7 @@ class CreateContigs:
             originalPath = list(path)
             for child in children:
                 for finishedPath in self.followSubPath(child, originalPath=originalPath):
-                    self.allPaths.append(finishedPath)
-
+                    yield finishedPath
             
     # Input: graph (edge list)
     # Output: contiguous sequences
@@ -108,11 +107,11 @@ class CreateContigs:
         walkStart = time.time()
         for node in startNodes:
             print(f"createContigs...starting path @: {node}")
-            self.followPath(node)
-            #contigsFromNode = [path for path in self.allPaths if path[0] == node]
-            #contigIndexTable[node] = contigsFromNode
+            for path in self.followPath(node):
+                self.allPaths.append(path)
         walkEnd = time.time()
         logging.info(f"Graph traversal finished in: {walkEnd-walkStart}\n")
+
 
         for path in self.allPaths:
             contig = []
