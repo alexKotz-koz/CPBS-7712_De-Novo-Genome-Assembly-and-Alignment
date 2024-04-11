@@ -37,33 +37,32 @@ class TestReadsToKmers(unittest.TestCase):
     def checkKmerPool(self, kmerPool):
         self.assertDictEqual(kmerPool,
             {
-                'ACTGG': {'Read1':[{0:4}]},
-                'CTGGA': {'Read1': [{1:5}]}, 
-                'TGGAT': {'Read1':[{2,6}]}, 
-                'GGATC': {'Read1':[{3:7}]}, 
-                'GATCT': {'Read1': [{4,8}]}, 
-                'ATCTT': {'Read1': [{5:9}]}, 
-                'TCTTC': {'Read1': [{6:10}]}, 
-                'CTTCA': {'Read1': [{7:11}]}, 
-                'TTCAG': {'Read1': [{8:12}]}, 
-
-                'CTAGC': {'Read2': [{0:4}]},
-                'TAGCC': {'Read2': [{1:5}]},
-                'AGCCT': {'Read2': [{2:6}], 'Read3': [{0:4}]},
-                'GCCTT': {'Read2': [{3:7}], 'Read3': [{1:5}]},
-                'CCTTA': {'Read2': [{4:8}]},
-                'CTTAT': {'Read2': [{5:9}]},
-                'TTATC': {'Read2': [{6:10}]},
+                'ACTGG': {'Read1': [{0: 5}]}, 
+                'CTGGA': {'Read1': [{1: 6}]}, 
+                'TGGAT': {'Read1': [{2: 7}]}, 
+                'GGATC': {'Read1': [{3: 8}]}, 
+                'GATCT': {'Read1': [{4: 9}]}, 
+                'ATCTT': {'Read1': [{5: 10}]}, 
+                'TCTTC': {'Read1': [{6: 11}]}, 
+                'CTTCA': {'Read1': [{7: 12}]}, 
+                'TTCAG': {'Read1': [{8: 13}]}, 
                 
-                'CCTTG': {'Read3': [{2:6}]},
-                'CTTCG': {'Read3': [{3:7}]},
-
-                'TTTAG': {'Read4': [{0:4}]},
-                'TTAGC': {'Read4': [{1:5}]},
-                'TAGCT': {'Read4': [{2:6}]},
-                'AGCTA': {'Read4': [{3:7}]},
-                'GCTAG': {'Read4': [{4:8}]}
-
+                'CTAGC': {'Read2': [{0: 5}]}, 
+                'TAGCC': {'Read2': [{1: 6}]}, 
+                'AGCCT': {'Read2': [{2: 7}], 'Read3': [{0: 5}]}, 
+                'GCCTT': {'Read2': [{3: 8}], 'Read3': [{1: 6}]}, 
+                'CCTTA': {'Read2': [{4: 9}]}, 
+                'CTTAT': {'Read2': [{5: 10}]}, 
+                'TTATC': {'Read2': [{6: 11}]}, 
+                
+                'CCTTC': {'Read3': [{2: 7}]}, 
+                'CTTCG': {'Read3': [{3: 8}]}, 
+                
+                'TTTAG': {'Read4': [{0: 5}]}, 
+                'TTAGC': {'Read4': [{1: 6}]}, 
+                'TAGCT': {'Read4': [{2: 7}]}, 
+                'AGCTA': {'Read4': [{3: 8}]}, 
+                'GCTAG': {'Read4': [{4: 9}]}
             }
         )
 
