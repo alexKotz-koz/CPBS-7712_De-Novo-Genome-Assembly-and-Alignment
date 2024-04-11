@@ -25,26 +25,16 @@ class DeBruijnGraph:
     def constructGraph(self):
         kmerPool = self.kmerPool
         edges = {}
-        edges2 = []
-        edges3 = {}
-        edges4 = {}
         nodes = set()
         
         # get the prefix and suffix of each kmer and add to the nodes and edges data structures
         for kmer in kmerPool:
             prefix, suffix = self.getPrefixSuffix(kmer)
             
-            edges[(prefix,suffix)] = kmerPool[kmer]
-            edges2.append((prefix,suffix))
-            if not edges3.get(prefix):
-                edges3[prefix] = [suffix]
+            if not edges.get(prefix):
+                edges[prefix] = [suffix]
             else:
-                edges3[prefix].append(suffix)
-
-            if prefix not in edges4:
-                edges4[prefix] = [suffix]
-            else:
-                edges4[prefix].append(suffix)
+                edges[prefix].append(suffix)
 
             nodes.add(prefix)
             nodes.add(suffix)
@@ -56,8 +46,7 @@ class DeBruijnGraph:
                 Graph.add_edges_from(edges)
             nx.draw(Graph, with_labels=True)
             plt.show()
-        
-        return nodes, edges3
+        return nodes, edges
 
         
 

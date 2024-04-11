@@ -68,21 +68,69 @@ class SearchString:
             contigsInfo.append(contigInfo)
 
         # find longest contig that contains the most query string kmers
+        possibleBestContigs = []
         mostQKmers = 0
         longestContig = 0
         longestContigMostQKmers = ""
+        # find mostQKmers 
         for contig in contigsInfo:
-            if contig['kmerCount'] > mostQKmers or (contig['kmerCount'] == mostQKmers and contig['length']>longestContig):
+            if contig['kmerCount'] > mostQKmers: #or (contig['kmerCount'] == mostQKmers and contig['length']>longestContig) :
                 mostQKmers = contig['kmerCount']
-                longestContig = contig['length']
-                longestContigMostQKmers = contig
+
+        for contig in contigsInfo:
+            if contig['kmerCount'] == mostQKmers:
+                possibleBestContigs.append(contig)
+        
+        chronologicalOrder = {}
+        for contig in possibleBestContigs:
+            for i, qkmer in enumerate(contig['q-kmers']):
+                startIndex = list(qkmer.values())[0]['index'][0]
+                if contig['contig'] not in chronologicalOrder:
+                    chronologicalOrder[contig['contig']] = [startIndex]
+                else:
+                    chronologicalOrder[contig['contig']].append(startIndex)
+        if len(chronologicalOrder) == 1: #passed
+            longestContigMostQKmers = list(chronologicalOrder.keys())[0]
+        else:
+            #minimum difference between starting indecies 
+            minDifference = float('inf')
+            minContigs = []
+
+            contigsInfoDict = {item['contig']: item for item in contigsInfo}
+            
+            for contig, indices in chronologicalOrder.items():
+                    # Calculate the differences between consecutive elements
+                diffs = [j - i for i, j in zip(indices[:-1], indices[1:])]
+
+                # if the max difference is smaller than the current minimum, update tracking variables
+                if max(diffs) < minDifference:
+                    minDifference = max(diffs)
+                    minContigs = [contig]
+
+                # if the max difference is equal to the current minimum, add the contig to minContigs
+                elif max(diffs) == minDifference:
+                    minContigs.append(contig)
+            
+            # if there is a tie, find the contig in contigsInfo
+            if len(minContigs) > 1:
+                maxKmerCount = float('-inf')
+                maxContig = None
+
+                for contig in minContigs:
+                    if contigsInfoDict[contig]['kmerCount'] > maxKmerCount:
+                        maxKmerCount = contigsInfoDict[contig]['kmerCount']
+                        maxContig = contig
+
+            longestContigMostQKmers = maxContig            
+
+    
         with open("data/output/ALLELES.fasta", 'w') as file:
-            file.write(longestContigMostQKmers['contig'])
+            file.write(longestContigMostQKmers)
 
         # find the reads that exist in each contig for ALLELES.fasta and output.aln
         readsInContig = []
         for read in self.readsKmerPool:
-            if read in longestContigMostQKmers['contig']:
+            if read in longestContigMostQKmers:
                 readsInContig.append({read:self.readsKmerPool[read]})
         with open("data/logs/readsInContig.json", "w") as file:
             json.dump(readsInContig, file)
