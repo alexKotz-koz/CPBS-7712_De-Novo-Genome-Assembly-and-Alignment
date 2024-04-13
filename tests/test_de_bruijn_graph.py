@@ -4,7 +4,7 @@ sys.path.insert(0, '../src/components')
 from deBruijnGraph import DeBruijnGraph
 
 class TestDeBruijnGraph(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.showGraphArg = False
         self.kmerPool = {
                 'ACTGG': {'Read1': [{0: 5}]}, 
