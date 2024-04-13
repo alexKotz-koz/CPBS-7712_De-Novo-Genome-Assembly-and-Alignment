@@ -2,9 +2,9 @@ import sys
 import os
 
 # required os set up for testing
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.insert(0, parent_dir)
+currentDir = os.path.dirname(os.path.abspath(__file__))
+parentDir = os.path.dirname(currentDir)
+sys.path.insert(0, parentDir)
 
 from components.readsToKmers import ReadsToKmers
 import json

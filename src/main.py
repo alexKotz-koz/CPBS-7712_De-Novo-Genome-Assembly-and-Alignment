@@ -5,7 +5,7 @@ import time
 import json
 import argparse
 import logging
-import cProfile
+
 
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
