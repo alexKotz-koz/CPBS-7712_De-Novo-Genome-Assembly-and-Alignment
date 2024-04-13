@@ -1,6 +1,5 @@
 import os
 import sys
-
 sys.path.insert(0, '../src/components')
 import unittest
 from collections import deque
