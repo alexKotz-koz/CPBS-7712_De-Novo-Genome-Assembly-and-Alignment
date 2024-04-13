@@ -32,7 +32,7 @@ class Output:
         qseqid = "contig1"
 
         # os management for GitHub workflow
-        scriptDir = os.path.dirname(os.path.realpath("main.py"))
+        scriptDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         print(f"source dir: {scriptDir}")
         readsInContigFilePath = os.path.join(scriptDir, "data/logs/readsInContig.json")
         print(f"readsInContigsFilePath: {readsInContigFilePath}")
