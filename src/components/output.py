@@ -33,11 +33,8 @@ class Output:
 
         # os management for GitHub workflow
         scriptDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        print(f"source dir: {scriptDir}")
         readsInContigFilePath = os.path.join(scriptDir, "data/logs/readsInContig.json")
-        print(f"readsInContigsFilePath: {readsInContigFilePath}")
         ALLELESFilePath = os.path.join(scriptDir, "data/output/ALLELES.fasta")
-        print(f"ALLELESFilePath: {ALLELESFilePath}")
 
         with open(readsInContigFilePath, "r") as file:
             readsInContig = json.load(file)
