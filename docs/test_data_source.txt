@@ -1,2 +1,0 @@
-Test Data was generated using ChatGPT v3.5 on Feb 2.
-Promt: can you give me a sample data set of 25 short read sequence data with variable (between 10-30 base pairs long) read length and a query search string to go along with it, preferably in fasta format?
