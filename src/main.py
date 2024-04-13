@@ -12,7 +12,7 @@ from components.readsToKmers import ReadsToKmers
 from components.createContigs import CreateContigs
 from components.searchString import SearchString
 from components.output import Output
-from components.reads_in_contigs import numberOfReadsInContigs
+from components.readsInContigs import numberOfReadsInContigs
 
 logging.basicConfig(
     filename="data/logs/app.log", filemode="w", format="%(message)s", level=logging.INFO
@@ -24,9 +24,11 @@ def importData(queryFile, readsFile):
     reads = ""
     queryData = []
     readsData = []
+    # os management for testing
     script_dir = os.path.dirname(__file__)  # get the directory of the current script
     queryFile = os.path.join(script_dir, queryFile)
     readsFile = os.path.join(script_dir, readsFile)
+
     # Import Query File Data
     with open(queryFile, "r") as inputQueryFile:
         query = inputQueryFile.readlines()
@@ -45,7 +47,6 @@ def importData(queryFile, readsFile):
     # Import Reads File Data
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
-
         for index, line in enumerate(reads):
             # identify the lines that contain the reads id's
             if ">" == line[0]:
@@ -71,7 +72,7 @@ def importData(queryFile, readsFile):
 
 def main():
     logging.info("Main: ")
-
+    # arg setup and management
     parser = argparse.ArgumentParser(description="De Novo Genome Assembler")
     parser.add_argument("-k", type=int, help="Size of k", required=True)
     parser.add_argument(
@@ -91,7 +92,6 @@ def main():
     readsFile = args.readsFile
     dataDir = "./data"
     readsFileLocation = os.path.join(dataDir, readsFile)
-    # queryData, readsData = importData("./data/QUERY.fasta", './data/DummyReads2.fasta')
     queryData, readsData = importData("./data/QUERY.fasta", readsFileLocation)
     logging.info(f"Number of reads from {readsFile}: {len(readsData)}")
     print(f"User defined k: {k}\n")
@@ -138,15 +138,20 @@ def main():
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
 
-    numberOfReadsInContigs(readsFile=readsFile)
+    # numberOfReadsInContigs(readsFile=readsFile) #utility function to get the number of reads that exist in each contig
+
+    oStart = time.time()
     outputInstance = Output()
     outputInstance.createOutput()
+    oEnd = time.time()
+    print(f"Output file creation completed in: {oEnd-oStart}\n")
+    logging.info(f"Output file creation completed in: {oEnd-oStart}\n")
 
 
 if __name__ == "__main__":
-
     start = time.time()
     main()
     end = time.time()
+
     logging.info(f"Total Runtime: {end-start}\n")
     print(f"\nTotal Runtime: {end-start}\n")

@@ -14,10 +14,12 @@ class TestOutput(unittest.TestCase):
         self.outputInstance = Output()
 
     def testCeateOutput(self):
+        # os management for creating and checking output.aln file
         originalCwd = os.getcwd()
         os.chdir(os.path.join(originalCwd, "../src"))
         self.outputInstance.createOutput()
         os.chdir(originalCwd)
+
         rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         outputFilePath = os.path.join(rootDir, "src/data/output/output.aln")
         self.assertTrue(os.path.exists(outputFilePath))

@@ -4,6 +4,7 @@ import json
 import unittest
 import pandas as pd
 
+# os management for testing
 sys.path.insert(0, "../src/components")
 
 from searchString import SearchString
@@ -11,12 +12,15 @@ from searchString import SearchString
 
 class TestSearchString(unittest.TestCase):
     def setUp(self):
+        # test data for testQueryToKmers
         rawQueryData = {
             "id": ["INITIAL_QUERY"],
             "sequence": ["GGATC"],
         }
         rawQueryData["length"] = [len(seq) for seq in rawQueryData["sequence"]]
         self.queryDataForKmers = pd.DataFrame(rawQueryData)
+
+        # test data for testCreateContigInfo and testAlign
         queryData = []
         with open("../src/data/QUERY.fasta", "r") as inputQueryFile:
             query = inputQueryFile.readlines()
@@ -115,6 +119,7 @@ class TestSearchString(unittest.TestCase):
         )
 
     def testQueryToKmers(self):
+        # secondary searchString instance for smaller query to kmer test
         self.searchStringInstance2 = SearchString(
             self.queryDataForKmers, self.readsKmerPool, self.contigs, self.k
         )
@@ -134,12 +139,10 @@ class TestSearchString(unittest.TestCase):
         contigsInfo, longestContigMostQKmers, readsInContig = (
             self.searchStringInstance.align()
         )
-        originalCwd = os.getcwd()
-        os.chdir(os.path.join(originalCwd, "../src"))
+
         self.assertEqual(contigsInfo, self.contigsInfoTest)
         self.assertEqual(longestContigMostQKmers, longestContigMostQKmersTest)
         self.assertEqual(readsInContig, self.readsInContig)
-        os.chdir(originalCwd)
 
 
 if __name__ == "__main__":

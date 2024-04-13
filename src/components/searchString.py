@@ -6,7 +6,6 @@ currentDir = os.path.dirname(os.path.abspath(__file__))
 parentDir = os.path.dirname(currentDir)
 sys.path.insert(0, parentDir)
 
-from components.readsToKmers import ReadsToKmers
 import json
 import pandas as pd
 

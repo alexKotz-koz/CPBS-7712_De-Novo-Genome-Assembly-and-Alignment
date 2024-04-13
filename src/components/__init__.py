@@ -1,1 +1,1 @@
-# Left blank to simulate components directory as an indepentent package
+# Left blank to simulate components directory as an independent package
