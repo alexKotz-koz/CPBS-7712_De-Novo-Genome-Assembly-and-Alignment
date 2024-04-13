@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import os
 
 """
 out.aln file structure:
@@ -30,9 +31,14 @@ class Output:
         rows = []
         qseqid = "contig1"
 
-        with open("data/logs/readsInContig.json", "r") as file:
+        # os management for GitHub workflow
+        scriptDir = os.path.dirname(os.path.realpath("main.py"))
+        readsInContigFilePath = os.path.join(scriptDir, "data/logs/readsInContig.json")
+        ALLELESFilePath = os.path.join(scriptDir, "data/output/ALLELES.fasta")
+
+        with open(readsInContigFilePath, "r") as file:
             readsInContig = json.load(file)
-        with open("data/output/ALLELES.fasta", "r") as file:
+        with open(ALLELESFilePath, "r") as file:
             contig = file.readline()
 
         # for each read that has been idetified in the ALLELES.fasta contig
