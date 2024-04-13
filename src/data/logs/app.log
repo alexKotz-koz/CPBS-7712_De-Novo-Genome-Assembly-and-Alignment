@@ -12,21 +12,21 @@ sequence    CATGAACTCGTTGAAGCGTTTTGAGTACTGCTCCGGGTTCACAGTT...
 length                                                    265
 Name: 890, dtype: object
 
-ReadsToKmer completed in: 0.10480213165283203
+ReadsToKmer completed in: 0.1079702377319336
 
-DeBruijnGraph completed in: 0.06103181838989258
+DeBruijnGraph completed in: 0.060195207595825195
 
 Number of start nodes: 926
 Number of end nodes: 960
-Graph traversal finished in: 2.0161967277526855
+Graph traversal finished in: 2.0331809520721436
 
 Average contig length: 240.10148770480365
 Total number of contigs: [35827]
 Minimum contig length: 27
 Maximum contig length: 422
-Create Contigs completed in: 2.4067201614379883
+Create Contigs completed in: 2.43056321144104
 
-Search String completed in: 8.694637060165405
+Search String completed in: 8.670286178588867
 
-Total Runtime: 11.367751121520996
+Total Runtime: 11.372152090072632
 
