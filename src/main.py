@@ -14,8 +14,16 @@ from components.searchString import SearchString
 from components.output import Output
 from components.readsInContigs import numberOfReadsInContigs
 
+logDir = "data/logs"
+os.makedirs(logDir, exist_ok=True)
+outputDir = "data/output"
+os.makedirs(outputDir, exist_ok=True)
+
 logging.basicConfig(
-    filename="data/logs/app.log", filemode="w", format="%(message)s", level=logging.INFO
+    filename=f"{logDir}/app.log",
+    filemode="w",
+    format="%(message)s",
+    level=logging.INFO,
 )
 
 
