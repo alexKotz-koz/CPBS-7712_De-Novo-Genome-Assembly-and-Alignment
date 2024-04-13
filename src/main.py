@@ -87,10 +87,10 @@ def main():
         "--graph", type=bool, default=False, help="boolean: Show graph or not"
     )
     parser.add_argument(
-        "--readsFile",
+        "-readsFile",
         type=str,
-        default=None,
-        help="Reads file for testing the number of reads in all contigs",
+        help="Reads file to consume for contig creation",
+        required=True,
     )
 
     args = parser.parse_args()
