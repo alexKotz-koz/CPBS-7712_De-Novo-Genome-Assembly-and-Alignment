@@ -32,10 +32,6 @@ class CreateContigs:
         else:
             return False, []
 
-    '''Memoization: 
-        @lru_cache(maxsize=None) is a decorator that enables memoization for the followSubPath method. It stores the results of the method calls in a cache, and when the method is called again with the same arguments, it returns the result from the cache instead of calling the method again.
-    '''
-
     def followSubPath(self, startNode, originalPath):
         #logging.info(f"Entering followSubPath with startNode: {startNode}")
 
@@ -43,7 +39,6 @@ class CreateContigs:
         while stack:
             currentNode, path = stack.pop()
             if self.checkIfLastNode(currentNode=currentNode):
-                print("isLastNode")
                 yield path # pause followSubPath execution, redirect control to followPath for consumption of yielded path
                 continue
             children = self.graph.get(currentNode, [])
@@ -60,8 +55,6 @@ class CreateContigs:
     # Input: start node and graph (edge list)
     # Output: allPaths object that contains all possible paths through the graph
     def followPath(self, startNode, visited=None):
-        #logging.info(f"Entering followPath with startNode: {startNode}")
-
         if visited is None:
             visited = deque([])
         unfinishedPaths = deque([])
@@ -82,7 +75,7 @@ class CreateContigs:
                             stack.extend(self.graph[currentNode])
                     if hasChildren:
                         unfinishedPaths.append((visited, children))
-        print(f"createContigs...Number of Unfinished Paths after first pass:{len(unfinishedPaths)}\n")
+        #print(f"createContigs...Number of Unfinished Paths after first pass:{len(unfinishedPaths)}\n")
         for path, children in unfinishedPaths:
             originalPath = list(path)
             for child in children:
@@ -95,23 +88,23 @@ class CreateContigs:
         edgesCount, startNodes = self.findStartNodes()
         incoming = sum(1 for counts in edgesCount.values() if counts[0] == 0)
         outgoing = sum(1 for counts in edgesCount.values() if counts[1] == 0)
-
-        with open('data/logs/edgesCount.json', 'w') as file:
-            json.dump(edgesCount, file)
+        try:
+            with open('data/logs/edgesCount.json', 'w') as file:
+                json.dump(edgesCount, file)
+        except FileNotFoundError:
+            print("File or directory not found")
         logging.info(f"Number of start nodes: {incoming}")
         logging.info(f"Number of end nodes: {outgoing}")
 
         contigs = []
-        contigIndexTable = {}
 
         walkStart = time.time()
         for node in startNodes:
-            print(f"createContigs...starting path @: {node}")
+            #print(f"createContigs...starting path @: {node}")
             for path in self.followPath(node):
                 self.allPaths.append(path)
         walkEnd = time.time()
         logging.info(f"Graph traversal finished in: {walkEnd-walkStart}\n")
-
 
         for path in self.allPaths:
             contig = []
@@ -125,10 +118,6 @@ class CreateContigs:
             contigStr = ''.join(contig)       
             contigs.append(contigStr)
 
-       # print(contigIndexTable)
-
-        #with open('data/logs/contigIndexTable.json', 'w') as file:
-            #json.dump(contigIndexTable, file)
 
         with open("data/logs/contigs.txt", "w") as file:
             for contig in contigs:
@@ -144,5 +133,4 @@ class CreateContigs:
         
         logging.info(f"Minimum contig length: {len(min(contigs, key=len))}")
         logging.info(f"Maximum contig length: {len(max(contigs, key=len))}")
-
-        return contigs, contigIndexTable
+        return contigs, self.allPaths

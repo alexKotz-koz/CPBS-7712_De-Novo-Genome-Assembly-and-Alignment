@@ -14,7 +14,9 @@ from components.searchString import SearchString
 from components.output import Output
 from components.reads_in_contigs import numberOfReadsInContigs
 
-logging.basicConfig(filename='data/logs/app.log', filemode='w', format='%(message)s', level=logging.INFO)
+logging.basicConfig(
+    filename="data/logs/app.log", filemode="w", format="%(message)s", level=logging.INFO
+)
 
 
 def importData(queryFile, readsFile):
@@ -28,32 +30,41 @@ def importData(queryFile, readsFile):
     # Import Query File Data
     with open(queryFile, "r") as inputQueryFile:
         query = inputQueryFile.readlines()
-        for index,line in enumerate(query):
+        for index, line in enumerate(query):
             # identify the line that has the id
             if ">" == line[0]:
                 # get the query string and the id, then place into queryData
-                queryString = query[index+1]
-                queryData.append({"id":line.lstrip('>').rstrip('\n'), "sequence": queryString.rstrip('\n')})
-    
-    #Import Reads File Data
+                queryString = query[index + 1]
+                queryData.append(
+                    {
+                        "id": line.lstrip(">").rstrip("\n"),
+                        "sequence": queryString.rstrip("\n"),
+                    }
+                )
+
+    # Import Reads File Data
     with open(readsFile, "r") as inputReadsFile:
         reads = inputReadsFile.readlines()
-        
-        for index,line in enumerate(reads):
+
+        for index, line in enumerate(reads):
             # identify the lines that contain the reads id's
             if ">" == line[0]:
                 # get the actual read from the proceeding line, then append read and its ID to readsData
-                readString = reads[index+1]
-                readsData.append({"id":line.lstrip('>').rstrip('\n'), "sequence": readString.rstrip('\n')})
-    
-    #convert queryData to dataframe and add a length column that is the length of the query string
-    dfQueryData = pd.DataFrame(queryData)
-    dfQueryData['length'] = dfQueryData['sequence'].str.len()
-    
-    #convert readsData to dataframe and add a length column that is the length of each read string
-    dfReadsData = pd.DataFrame(readsData)
-    dfReadsData['length'] = dfReadsData['sequence'].str.len()
+                readString = reads[index + 1]
+                readsData.append(
+                    {
+                        "id": line.lstrip(">").rstrip("\n"),
+                        "sequence": readString.rstrip("\n"),
+                    }
+                )
 
+    # convert queryData to dataframe and add a length column that is the length of the query string
+    dfQueryData = pd.DataFrame(queryData)
+    dfQueryData["length"] = dfQueryData["sequence"].str.len()
+
+    # convert readsData to dataframe and add a length column that is the length of each read string
+    dfReadsData = pd.DataFrame(readsData)
+    dfReadsData["length"] = dfReadsData["sequence"].str.len()
 
     return dfQueryData, dfReadsData
 
@@ -62,24 +73,31 @@ def main():
     logging.info("Main: ")
 
     parser = argparse.ArgumentParser(description="De Novo Genome Assembler")
-    parser.add_argument('-k', type=int, help='Size of k', required=True)
-    parser.add_argument('--graph', type=bool, default=False, help='boolean: Show graph or not')
-    parser.add_argument('--readsFile', type=str, default=None,help='Reads file for testing the number of reads in all contigs')
+    parser.add_argument("-k", type=int, help="Size of k", required=True)
+    parser.add_argument(
+        "--graph", type=bool, default=False, help="boolean: Show graph or not"
+    )
+    parser.add_argument(
+        "--readsFile",
+        type=str,
+        default=None,
+        help="Reads file for testing the number of reads in all contigs",
+    )
 
     args = parser.parse_args()
 
     k = args.k
     showGraphArg = args.graph
     readsFile = args.readsFile
-    dataDir = './data'
+    dataDir = "./data"
     readsFileLocation = os.path.join(dataDir, readsFile)
-    #queryData, readsData = importData("./data/QUERY.fasta", './data/DummyReads2.fasta')
+    # queryData, readsData = importData("./data/QUERY.fasta", './data/DummyReads2.fasta')
     queryData, readsData = importData("./data/QUERY.fasta", readsFileLocation)
     logging.info(f"Number of reads from {readsFile}: {len(readsData)}")
     print(f"User defined k: {k}\n")
     logging.info(f"User defined size of k-mer: {k}\n")
-    minR = readsData['length'].idxmin()
-    maxR = readsData['length'].idxmax()
+    minR = readsData["length"].idxmin()
+    maxR = readsData["length"].idxmax()
     minlen = readsData.loc[minR]
     maxlen = readsData.loc[maxR]
 
@@ -94,7 +112,9 @@ def main():
     logging.info(f"ReadsToKmer completed in: {rtkStop-rtkStart}\n")
 
     dbgStart = time.time()
-    debruijnGraphInstance = DeBruijnGraph(kmerPool=readsKmerPool, k=k, showGraphArg=showGraphArg)
+    debruijnGraphInstance = DeBruijnGraph(
+        kmerPool=readsKmerPool, k=k, showGraphArg=showGraphArg
+    )
     nodes, edges = debruijnGraphInstance.constructGraph()
     dbgStop = time.time()
     print(f"DeBruijnGraph completed in: {dbgStop-dbgStart}\n")
@@ -102,23 +122,26 @@ def main():
 
     ccStart = time.time()
     createContigsInstance = CreateContigs(graph=edges)
-    contigs, contigIndexTable = createContigsInstance.createContigs()
+    contigs, allPaths = createContigsInstance.createContigs()
     ccStop = time.time()
     print(f"Create Contigs completed in: {ccStop-ccStart}\n")
     logging.info(f"Create Contigs completed in: {ccStop-ccStart}\n")
 
     ssStart = time.time()
-    searchStringInstance = SearchString(queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k)
-    contigsInfo, contig, readsInContig = searchStringInstance.align()
-    with open('data/logs/contigsInfo.json', "w") as file:
+    searchStringInstance = SearchString(
+        queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k
+    )
+    contigsInfo, contig, readsInContig = searchStringInstance.searchString()
+    with open("data/logs/contigsInfo.json", "w") as file:
         json.dump(contigsInfo, file)
     ssEnd = time.time()
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
-    
+
     numberOfReadsInContigs(readsFile=readsFile)
     outputInstance = Output()
     outputInstance.createOutput()
+
 
 if __name__ == "__main__":
 
