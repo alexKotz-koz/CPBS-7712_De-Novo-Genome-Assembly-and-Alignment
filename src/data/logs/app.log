@@ -12,7 +12,7 @@ sequence    ACTGGATCTTCAG
 length                 13
 Name: 0, dtype: object
 
-ReadsToKmer completed in: 0.0001010894775390625
+ReadsToKmer completed in: 0.00010323524475097656
 
 DeBruijnGraph completed in: 1.2874603271484375e-05
 
@@ -22,12 +22,12 @@ Average contig length: 12.0
 Total number of contigs: [5]
 Minimum contig length: 11
 Maximum contig length: 13
-Create Contigs completed in: 0.0005772113800048828
+Create Contigs completed in: 0.00030422210693359375
 
-Search String completed in: 0.0023653507232666016
+Search String completed in: 0.002095937728881836
 
-Output file creation completed in: 0.0006871223449707031
+Output file creation completed in: 0.0006730556488037109
 
-Memory used: 104.171875 MB
-Total Runtime: 0.0065021514892578125
+Memory used: 103.9375 MB
+Total Runtime: 0.00493621826171875
 
