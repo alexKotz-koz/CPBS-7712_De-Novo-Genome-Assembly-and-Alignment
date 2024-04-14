@@ -9,5 +9,5 @@ dependencies:
   - pip
   - networkx
   - matplotlib
-
+  - psutil
   
