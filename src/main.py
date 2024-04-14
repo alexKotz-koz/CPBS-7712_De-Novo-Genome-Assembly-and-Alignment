@@ -146,9 +146,7 @@ def main():
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
 
-    numberOfReadsInContigs(
-        readsFile=readsFile
-    )  # utility function to get the number of reads that exist in each contig
+    # numberOfReadsInContigs(readsFile=readsFile)  # utility function to get the number of reads that exist in each contig
 
     oStart = time.time()
     outputInstance = Output()
