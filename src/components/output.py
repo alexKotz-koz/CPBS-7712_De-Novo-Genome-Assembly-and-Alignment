@@ -67,4 +67,4 @@ class Output:
                             rows.append(newRow)
 
         outputDf = pd.DataFrame(rows)
-        outputDf.to_csv("data/output/output.aln")
+        outputDf.to_csv("data/output/output.aln", sep="\t", index=False)

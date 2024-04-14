@@ -1,0 +1,33 @@
+Main: 
+Number of reads from READS_Subset2000.fasta: 2000
+User defined size of k-mer: 20
+
+Shortest read: id                       2S43D:08487:12925
+sequence    CCCCCCCTTTTTTTTTATTTATTTTTTAGT
+length                                  30
+Name: 275, dtype: object
+
+Longest read: id                                          2S43D:00870:02127
+sequence    ATCCTTAACAAATCTGATGCCCTCTTCTGGAGTGTCTGAAGACAAC...
+length                                                    285
+Name: 1130, dtype: object
+
+ReadsToKmer completed in: 0.21186304092407227
+
+DeBruijnGraph completed in: 0.10595989227294922
+
+Number of start nodes: 1831
+Number of end nodes: 1913
+Average contig length: 286.81926978780774
+Total number of contigs: [3581233]
+Minimum contig length: 25
+Maximum contig length: 582
+Create Contigs completed in: 173.86339211463928
+
+Search String completed in: 1032.2476131916046
+
+Output file creation completed in: 0.021189212799072266
+
+Memory used: 861.96875 MB
+Total Runtime: 1279.5308909416199
+

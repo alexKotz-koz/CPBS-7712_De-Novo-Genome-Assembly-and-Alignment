@@ -5,7 +5,7 @@ import time
 import json
 import argparse
 import logging
-
+import psutil
 
 from components.deBruijnGraph import DeBruijnGraph
 from components.readsToKmers import ReadsToKmers
@@ -146,7 +146,9 @@ def main():
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
 
-    # numberOfReadsInContigs(readsFile=readsFile) #utility function to get the number of reads that exist in each contig
+    numberOfReadsInContigs(
+        readsFile=readsFile
+    )  # utility function to get the number of reads that exist in each contig
 
     oStart = time.time()
     outputInstance = Output()
@@ -154,6 +156,13 @@ def main():
     oEnd = time.time()
     print(f"Output file creation completed in: {oEnd-oStart}\n")
     logging.info(f"Output file creation completed in: {oEnd-oStart}\n")
+
+    process = psutil.Process(os.getpid())
+
+    mem_info = process.memory_info()
+
+    print(f"Memory used: {mem_info.rss / 1024 / 1024} MB")
+    logging.info(f"Memory used: {mem_info.rss / 1024 / 1024} MB")
 
 
 if __name__ == "__main__":

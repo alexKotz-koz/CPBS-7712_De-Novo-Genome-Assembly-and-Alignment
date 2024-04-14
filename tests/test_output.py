@@ -25,7 +25,7 @@ class TestOutput(unittest.TestCase):
         self.assertTrue(os.path.exists(outputFilePath))
 
         numRows = 9  # hard coded for the following argument set (py main.py -k 5 --readsFile DummyReads.fasta)
-        outputDf = pd.read_csv(outputFilePath)
+        outputDf = pd.read_csv(outputFilePath, sep="\t")
         self.assertEqual(len(outputDf), numRows)
 
 
