@@ -1,11 +1,10 @@
-# Query Sequence Finder
+# De Novo Genome Assembly and Alignment
 > Goal: Find the longest contig that contains a query sequence given a set of next generation sequence reads. 
 
 **The assignment for this homework:** _Create a program that takes as input the set of all next-generation sequencing reads identified in a sample and an initial query sequence and returns the largest sequence contig that can be constructed from the reads that contains the initial query sequence._
 
 The outline of this project is as follows:
 - Read in a set of next generation sequence (NGS) reads and a query sequence.
-    - Strengths and limitations
 - Break each of the NGS sequence reads into k-mers (all possible substrings of length k that are contained in a string).
 - Construct a [De Bruijn Graph](https://en.wikipedia.org/wiki/De_Bruijn_graph) using the prefix and suffix of each k-mer. [Concept Overview](https://www.youtube.com/watch?v=TNYZZKrjCSk&list=PL2mpR0RYFQsBiCWVJSvVAO3OJ2t7DzoHA&index=51). 
 - Construct contigs (contiguous sequences) by following all possible paths through the De Brujin Graph.
@@ -43,12 +42,11 @@ python3 main.py [options]
 ```
 Options:
 - `-h, --help`: Show help menu
-- `-k`: Size of k
-- `--graph`: Show graph or not
-- `--readsFile`: Reads file for testing the number of reads in all contigs
+- `-k`: Size of k (required)
+- `-readsFile`: Reads file to use for the project, assumed fasta format (required) 
+- `--graph`: Show graph or not (optional)
 
-
-- Note: Visualizing a large graph will take a significant amount of time to generate. Recommended to visualize a subset of the original data for reasonable runtime. 
+- Note: Visualizing a large graph will take a significant amount of time to generate. Recommended to visualize a subset of the original data for reasonable execution time. 
 
 ## Requirements
 - Python 3.9 or higher. 
@@ -56,14 +54,4 @@ Options:
 - Miniconda (see Installation section for further instructions).
 - macOS or Linux based operating system.
 
-## Test graph visual
-Here is a simple flow chart:
-
-```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-```
 
