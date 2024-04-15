@@ -136,10 +136,22 @@ class SearchString:
         filePathReadsInContig = os.path.join(rootDir, "data/logs/readsInContig.json")
         with open(filePathReadsInContig, "w") as file:
             json.dump(readsInContig, file)
-        return contigsInfo, longestContigMostQKmers, readsInContig
+
+        # find the query k-mers that exist in the final contig and where they exist
+        qKmerInFinalContig = []
+        for qKmer in queryKmerPool:
+            if qKmer in longestContigMostQKmers:
+                qKmerInFinalContig.append({qKmer: queryKmerPool[qKmer]})
+        filePathQKmersInContig = os.path.join(rootDir, "data/logs/qKmerInContig.json")
+        with open(filePathQKmersInContig, "w") as file:
+            json.dump(qKmerInFinalContig, file)
+
+        return contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig
 
     def searchString(self):
         queryKmerPool = self.queryToKmers()
         self.kmerPoolsToFile(queryKmerPool=queryKmerPool)
-        contigsInfo, longestContigMostQKmers, readsInContig = self.align()
-        return contigsInfo, longestContigMostQKmers, readsInContig
+        contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig = (
+            self.align()
+        )
+        return contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig

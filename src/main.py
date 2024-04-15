@@ -139,10 +139,13 @@ def main():
     searchStringInstance = SearchString(
         queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k
     )
-    contigsInfo, contig, readsInContig = searchStringInstance.searchString()
+    contigsInfo, contig, readsInContig, qKmerInContig = (
+        searchStringInstance.searchString()
+    )
     with open("data/logs/contigsInfo.json", "w") as file:
         json.dump(contigsInfo, file)
     ssEnd = time.time()
+    logging.info(f"There are {len(qKmerInContig)} in the final contig. ")
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
 
