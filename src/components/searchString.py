@@ -121,6 +121,7 @@ class SearchString:
                         maxKmerCount = contigsInfoDict[contig]["length"]
                         maxContig = contig
             longestContigMostQKmers = maxContig
+            # index of contig in self.contigs returned from contigCreation
             contigIndex = self.contigs.index(longestContigMostQKmers)
 
         rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
