@@ -20,8 +20,8 @@ qend: ending coordinate in contig that matches sseq
 
 class Output:
 
-    def __init__(self):
-        pass
+    def __init__(self, contigIndex):
+        self.contigIndex = contigIndex
 
     # Input: all of the read-kmers that exist in the final contig with thier associated metadata (readsInContig.json), final contig string (ALLELES.fasta)
     # Output: output.aln file (specs above)
@@ -29,7 +29,7 @@ class Output:
         readsInContig = []
         contig = ""
         rows = []
-        qseqid = "contig1"
+        qseqid = "contig" + str(self.contigIndex)
 
         # os management for GitHub workflow
         scriptDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -67,4 +67,4 @@ class Output:
                             rows.append(newRow)
 
         outputDf = pd.DataFrame(rows)
-        outputDf.to_csv("data/output/output.aln", sep="\t", index=False)
+        outputDf.to_csv("data/output/ALLELES.aln", sep="\t", index=False)

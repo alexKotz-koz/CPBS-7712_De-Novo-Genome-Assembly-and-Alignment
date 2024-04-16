@@ -121,6 +121,7 @@ class SearchString:
                         maxKmerCount = contigsInfoDict[contig]["length"]
                         maxContig = contig
             longestContigMostQKmers = maxContig
+            contigIndex = self.contigs.index(longestContigMostQKmers)
 
         rootDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filePathALLELES = os.path.join(rootDir, "data/output/ALLELES.fasta")
@@ -146,12 +147,28 @@ class SearchString:
         with open(filePathQKmersInContig, "w") as file:
             json.dump(qKmerInFinalContig, file)
 
-        return contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig
+        return (
+            contigsInfo,
+            longestContigMostQKmers,
+            contigIndex,
+            readsInContig,
+            qKmerInFinalContig,
+        )
 
     def searchString(self):
         queryKmerPool = self.queryToKmers()
         self.kmerPoolsToFile(queryKmerPool=queryKmerPool)
-        contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig = (
-            self.align()
+        (
+            contigsInfo,
+            longestContigMostQKmers,
+            contigIndex,
+            readsInContig,
+            qKmerInFinalContig,
+        ) = self.align()
+        return (
+            contigsInfo,
+            longestContigMostQKmers,
+            contigIndex,
+            readsInContig,
+            qKmerInFinalContig,
         )
-        return contigsInfo, longestContigMostQKmers, readsInContig, qKmerInFinalContig

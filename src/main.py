@@ -139,20 +139,20 @@ def main():
     searchStringInstance = SearchString(
         queryData=queryData, contigs=contigs, readsKmerPool=readsKmerPool, k=k
     )
-    contigsInfo, contig, readsInContig, qKmerInContig = (
+    contigsInfo, contig, contigIndex, readsInContig, qKmerInContig = (
         searchStringInstance.searchString()
     )
     with open("data/logs/contigsInfo.json", "w") as file:
         json.dump(contigsInfo, file)
     ssEnd = time.time()
-    logging.info(f"There are {len(qKmerInContig)} in the final contig. ")
+    logging.info(f"There are {len(qKmerInContig)} qkmers in the final contig. ")
     print(f"Search String completed in: {ssEnd-ssStart}\n")
     logging.info(f"Search String completed in: {ssEnd-ssStart}\n")
 
     # numberOfReadsInContigs(readsFile=readsFile)  # utility function to get the number of reads that exist in each contig
 
     oStart = time.time()
-    outputInstance = Output()
+    outputInstance = Output(contigIndex)
     outputInstance.createOutput()
     oEnd = time.time()
     print(f"Output file creation completed in: {oEnd-oStart}\n")
