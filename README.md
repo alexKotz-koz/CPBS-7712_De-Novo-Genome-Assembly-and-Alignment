@@ -11,8 +11,6 @@ The outline of this project is as follows:
 - Search each contig for the query string.
 - Return the longest contig that contains the query string.
 
-*Add all decision
-
 ## Installation
 
 OS X & Linux:
@@ -54,4 +52,8 @@ Options:
 - Miniconda (see Installation section for further instructions).
 - macOS or Linux based operating system.
 
-
+## Note on the output files available in data/logs and data/output:
+To compensate for GitHubs file size storage limit all files under the data/logs and data/output directories were generated via: 
+```{sh}
+python3 main.py -k 5 -readsFile DummyReads.fasta
+```
