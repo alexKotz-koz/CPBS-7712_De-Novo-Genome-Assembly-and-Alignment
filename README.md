@@ -1,7 +1,7 @@
 # De Novo Genome Assembly and Alignment
 > Goal: Find the longest contig that contains a query sequence given a set of next-generation sequence reads. 
 
-**The assignment for this homework:** _A pipeline that takes as input the set of all next-generation sequencing reads identified in a sample and an initial query sequence and returns the largest sequence contig that can be constructed from the reads that contain the initial query sequence._
+_A pipeline that takes as input the set of all next-generation sequencing reads identified in a sample and an initial query sequence and returns the largest sequence contig that can be constructed from the reads that contain the initial query sequence._
 
 The outline of this project is as follows:
 - Read in a set of next-generation sequence (NGS) reads and a query sequence.
