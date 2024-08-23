@@ -1,13 +1,13 @@
 # De Novo Genome Assembly and Alignment
-> Goal: Find the longest contig that contains a query sequence given a set of next generation sequence reads. 
+> Goal: Find the longest contig that contains a query sequence given a set of next-generation sequence reads. 
 
-**The assignment for this homework:** _Create a program that takes as input the set of all next-generation sequencing reads identified in a sample and an initial query sequence and returns the largest sequence contig that can be constructed from the reads that contains the initial query sequence._
+**The assignment for this homework:** _A pipeline that takes as input the set of all next-generation sequencing reads identified in a sample and an initial query sequence and returns the largest sequence contig that can be constructed from the reads that contain the initial query sequence._
 
 The outline of this project is as follows:
-- Read in a set of next generation sequence (NGS) reads and a query sequence.
+- Read in a set of next-generation sequence (NGS) reads and a query sequence.
 - Break each of the NGS sequence reads into k-mers (all possible substrings of length k that are contained in a string).
 - Construct a [De Bruijn Graph](https://en.wikipedia.org/wiki/De_Bruijn_graph) using the prefix and suffix of each k-mer. [Concept Overview](https://www.youtube.com/watch?v=TNYZZKrjCSk&list=PL2mpR0RYFQsBiCWVJSvVAO3OJ2t7DzoHA&index=51). 
-- Construct contigs (contiguous sequences) by following all possible paths through the De Brujin Graph.
+- Construct contigs (contiguous sequences) by following all possible paths through the De Bruijn Graph.
 - Search each contig for the query string.
 - Return the longest contig that contains the query string.
 
